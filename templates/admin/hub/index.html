@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Executive Hub - VC C'29 Student Union{% endblock %}
+
+{% block extra_head %}
+<style>
+    #admin-hub-hero {
+        position: relative;
+        overflow: hidden;
+    }
+    #admin-hub-hero::before,
+    #admin-hub-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    #admin-hub-hero::before {
+        background-image: url('{% static "VictoBackground.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        filter: blur(5px);
+        transform: scale(1.08);
+        -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.94) 55%, rgba(0, 0, 0, 0) 100%);
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.94) 55%, rgba(0, 0, 0, 0) 100%);
+        opacity: 0.9;
+    }
+    #admin-hub-hero::after {
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.9) 0%, rgba(17, 24, 39, 0.6) 55%, rgba(17, 24, 39, 0) 100%);
+    }
+    html.dark #admin-hub-hero::after {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.65) 55%, rgba(0, 0, 0, 0) 100%);
+    }
+    #admin-hub-hero .hero-inner {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="admin-hub-hero" class="relative min-h-[50vh] flex items-center text-center">
+    <div class="hero-inner container mx-auto px-6 py-16">
+        <div class="max-w-4xl mx-auto space-y-6">
+            <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-cream-100/70">Executive Coordination Hub</p>
+            <h1 class="text-5xl md:text-6xl font-serif font-light bg-gradient-to-r from-cream-100 via-cream-300 to-cream-100 text-transparent bg-clip-text">Council Operations</h1>
+            <p class="text-lg md:text-xl text-cream-200/90 font-light leading-relaxed">Synchronize dispatches, action items, and campus engagements in one console designed for the Victoria College C'29 Student Union.</p>
+        </div>
+    </div>
+</section>
+
+<div id="admin-hub-root" class="container mx-auto px-6 py-12" data-sse-url="{% url 'admin_chat_events' %}">
+    <div class="stat-grid mb-10 lg:grid-cols-4">
+        <div class="rounded-3xl bg-cream-50/85 dark:bg-sage-900/80 border border-sage-200 dark:border-sage-700 p-6 shadow-lg">
+            <p class="text-sm uppercase tracking-[0.3em] text-sage-500 dark:text-sage-300 mb-2">Total Tasks</p>
+            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.total }}</p>
+            <p class="text-sage-500 dark:text-sage-300 text-sm mt-1">Across every committee queue.</p>
+        </div>
+        <div class="rounded-3xl bg-cream-50/85 dark:bg-sage-900/80 border border-sage-200 dark:border-sage-700 p-6 shadow-lg">
+            <p class="text-sm uppercase tracking-[0.3em] text-sage-500 dark:text-sage-300 mb-2">Urgent + High</p>
+            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.urgent|add:admin_hub.task_summary.high }}</p>
+            <p class="text-sage-500 dark:text-sage-300 text-sm mt-1">Items needing immediate attention.</p>
+        </div>
+        <div class="rounded-3xl bg-cream-50/85 dark:bg-sage-900/80 border border-sage-200 dark:border-sage-700 p-6 shadow-lg">
+            <p class="text-sm uppercase tracking-[0.3em] text-sage-500 dark:text-sage-300 mb-2">Completed</p>
+            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.done }}</p>
+            <p class="text-sage-500 dark:text-sage-300 text-sm mt-1">Logged victories this term.</p>
+        </div>
+        <div class="rounded-3xl bg-gradient-to-r from-lavender-200/80 to-cream-100/80 dark:from-sage-800 dark:to-sage-900 border border-sage-200/60 dark:border-sage-700 p-6 shadow-xl">
+            <p class="text-sm uppercase tracking-[0.3em] text-sage-700 dark:text-cream-200 mb-2">Blocked</p>
+            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.blocked }}</p>
+            <p class="text-sage-700/80 dark:text-cream-300 text-sm mt-1">Escalate or nudge owners today.</p>
+        </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start">
+        <div class="space-y-10">
+            {% include "admin/hub/partials/tasks.html" %}
+        </div>
+        <div class="space-y-6">
+            <section class="rounded-3xl bg-sage-900 text-cream-100 border border-sage-700 shadow-xl p-6">
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                        <p class="uppercase tracking-[0.35em] text-xs text-cream-200/70">Runway</p>
+                        <h2 class="text-2xl font-serif font-semibold">Executive Snapshot</h2>
+                        <p class="text-sm text-cream-200/80">Stay ahead with quick metrics and shortcuts.</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-cream-100/10 px-3 py-1 text-xs font-semibold">
+                        <span class="h-2 w-2 rounded-full bg-lavender-300 animate-pulse"></span>
+                        Live
+                    </span>
+                </div>
+                <div class="grid gap-3">
+                    <div class="flex items-center justify-between text-sm">
+                        <span>In Progress</span>
+                        <span class="font-semibold">{{ admin_hub.task_summary.in_progress }}</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-cream-100/10">
+                        {% with total=admin_hub.task_summary.total|default:0 %}
+                        {% if total %}
+                        <div class="h-full rounded-full bg-lavender-300" style="width:{% widthratio admin_hub.task_summary.in_progress total 100 %}%;"></div>
+                        {% else %}
+                        <div class="h-full rounded-full bg-lavender-300" style="width:0;"></div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="flex items-center justify-between text-sm mt-2">
+                        <span>Todo</span>
+                        <span class="font-semibold">{{ admin_hub.task_summary.todo }}</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-cream-100/10">
+                        {% with total=admin_hub.task_summary.total|default:0 %}
+                        {% if total %}
+                        <div class="h-full rounded-full bg-lavender-200" style="width:{% widthratio admin_hub.task_summary.todo total 100 %}%;"></div>
+                        {% else %}
+                        <div class="h-full rounded-full bg-lavender-200" style="width:0;"></div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="flex items-center justify-between text-sm mt-2">
+                        <span>Done</span>
+                        <span class="font-semibold">{{ admin_hub.task_summary.done }}</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-cream-100/10">
+                        {% with total=admin_hub.task_summary.total|default:0 %}
+                        {% if total %}
+                        <div class="h-full rounded-full bg-sage-300" style="width:{% widthratio admin_hub.task_summary.done total 100 %}%;"></div>
+                        {% else %}
+                        <div class="h-full rounded-full bg-sage-300" style="width:0;"></div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                    <a href="{% url 'post_create' %}" class="rounded-2xl border border-cream-100/20 bg-cream-100/10 px-4 py-3 text-sm font-semibold text-cream-100 hover:bg-cream-100/20 transition">Compose Post</a>
+                    <a href="{% url 'video_create' %}" class="rounded-2xl border border-cream-100/20 bg-cream-100/10 px-4 py-3 text-sm font-semibold text-cream-100 hover:bg-cream-100/20 transition">Add Video</a>
+                    <a href="{% url 'posts' %}" class="rounded-2xl border border-cream-100/20 bg-cream-100/10 px-4 py-3 text-sm font-semibold text-cream-100 hover:bg-cream-100/20 transition">Manage Posts</a>
+                    <a href="{% url 'videos' %}" class="rounded-2xl border border-cream-100/20 bg-cream-100/10 px-4 py-3 text-sm font-semibold text-cream-100 hover:bg-cream-100/20 transition">Manage Videos</a>
+                </div>
+            </section>
+
+            <section class="rounded-3xl bg-cream-50/95 dark:bg-sage-900/85 border border-sage-200 dark:border-sage-700 shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="uppercase tracking-[0.35em] text-xs text-sage-500 dark:text-sage-400">Deadlines</p>
+                        <h2 class="text-xl font-serif font-semibold">Upcoming Focus</h2>
+                    </div>
+                    <span class="text-xs text-sage-500 dark:text-sage-400">Next three</span>
+                </div>
+                <div class="space-y-4">
+                    {% with upcoming=admin_hub.tasks|slice:":3" %}
+                    {% for task in upcoming %}
+                    <article class="rounded-2xl border border-sage-200/70 dark:border-sage-700/70 bg-white/90 dark:bg-sage-950/70 p-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs uppercase tracking-wide text-sage-500 dark:text-sage-400">{{ task.priority_label }}</span>
+                            <span class="text-xs text-sage-500 dark:text-sage-400">{{ task.due_date_human|default:"No date" }}</span>
+                        </div>
+                        <p class="mt-1 text-sm font-semibold text-sage-800 dark:text-cream-100">{{ task.title }}</p>
+                        <p class="text-xs text-sage-500 dark:text-sage-400">{{ task.assigned_to_name }}</p>
+                    </article>
+                    {% empty %}
+                    <p class="text-sm text-sage-600 dark:text-sage-300">No tasks logged yet.</p>
+                    {% endfor %}
+                    {% endwith %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="mt-10">
+        {% include "admin/hub/partials/chat.html" %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{{ block.super }}
+<script>
+(function () {
+    const root = document.getElementById('admin-hub-root');
+    if (!root || typeof window.htmx === 'undefined') {
+        return;
+    }
+
+    const refreshSection = (targetId) => {
+        const node = document.getElementById(targetId);
+        if (!node) {
+            return;
+        }
+        const url = node.dataset.refreshUrl;
+        if (!url) {
+            return;
+        }
+        const indicator = node.dataset.indicator || '';
+        window.htmx.ajax('GET', url, {
+            target: `#${targetId}`,
+            swap: 'outerHTML',
+            indicator: indicator,
+        });
+    };
+
+    root.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-refresh-target]');
+        if (!trigger) {
+            return;
+        }
+        event.preventDefault();
+        refreshSection(trigger.dataset.refreshTarget);
+    });
+
+    const connectSse = () => {
+        const sseUrl = root.dataset.sseUrl;
+        if (!sseUrl || typeof window.EventSource === 'undefined') {
+            return;
+        }
+        const source = new EventSource(sseUrl);
+        const retry = () => {
+            source.close();
+            setTimeout(connectSse, 4000);
+        };
+        source.addEventListener('chat', () => refreshSection('admin-hub-chat'));
+        source.addEventListener('tasks', () => refreshSection('admin-hub-tasks'));
+        source.addEventListener('heartbeat', () => {});
+        source.addEventListener('error', retry);
+    };
+
+    connectSse();
+})();
+</script>
+{% endblock %}

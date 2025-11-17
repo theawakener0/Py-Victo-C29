@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Union Updates - VC C'29 Student Union</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assests/VictoLogo.jpg" type="image/jpeg">
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'sage': {
+                            50: '#f6f6f6', 100: '#e8e8e8', 200: '#d8d8d8', 300: '#c6c6c6',
+                            400: '#a5a5a5', 500: '#8a8a8a', 600: '#6f6f6f', 700: '#515151',
+                            800: '#373737', 900: '#171717',
+                        },
+                        'cream': {
+                            50: '#fcfcfc', 100: '#f2f2f2', 200: '#e6e6e6', 300: '#dadada', 400: '#cecece',
+                        },
+                        'lavender': {
+                            50: '#fdfdfd', 100: '#ececec', 200: '#d6d6d6', 300: '#bebebe', 400: '#a4a4a4', 500: '#8a8a8a',
+                        },
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'Georgia', 'serif'],
+                        'sans': ['"Source Sans 3"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <script>
+        // Dark mode initialization
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle at 12px 12px, rgba(23, 23, 23, 0.18) 0, rgba(23, 23, 23, 0.18) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.5;
+            z-index: -1;
+        }
+        html.dark body::before {
+            background-image: radial-gradient(circle at 12px 12px, rgba(204, 204, 204, 0.18) 0, rgba(204, 204, 204, 0.18) 1px, transparent 1px);
+            opacity: 0.32;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at top, rgba(23, 23, 23, 0.28), transparent 55%), radial-gradient(circle at bottom, rgba(99, 99, 99, 0.22), transparent 45%);
+            z-index: -1;
+        }
+        html.dark body::after {
+            background: radial-gradient(circle at top, rgba(0, 0, 0, 0.82), transparent 55%), radial-gradient(circle at bottom, rgba(136, 136, 136, 0.36), transparent 45%);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-cream-50 via-cream-200 to-sage-100 dark:from-black dark:via-sage-900 dark:to-sage-800 text-sage-800 dark:text-cream-100 font-sans transition-colors duration-500">
+
+    {{template "nav" .}}
+    <div class="container mx-auto px-4 py-12">
+        <div class="flex justify-center">
+            <div class="w-full md:w-10/12 lg:w-8/12">
+                <div class="text-center mb-12 animate-fade-in">
+                    <h1 class="text-5xl md:text-6xl font-serif font-bold mb-4 bg-gradient-to-r from-sage-900 via-sage-500 to-sage-800 dark:from-cream-100 dark:via-cream-300 dark:to-cream-200 bg-clip-text text-transparent">
+                        Council Dispatches
+                    </h1>
+                    <p class="text-lg text-sage-600 dark:text-cream-200 font-light max-w-2xl mx-auto">
+                        Minutes, statements, and campaign recaps from the Victoria College C'29 Student Union. <a href="/" class="text-sage-700 dark:text-cream-100 underline underline-offset-4 decoration-sage-400 dark:decoration-cream-300">Return to the quad</a>
+                    </p>
+                </div>
+                
+                <div class="border-t-2 border-dashed border-sage-300 dark:border-sage-600 my-8"></div>
+                
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-8 text-sage-800 dark:text-cream-100 animate-slide-up">
+                    All Bulletins
+                </h2>
+                
+                <div id="blog-posts-container" class="space-y-6">
+                    {{ range .Posts.Posts }}
+                        <article class="group bg-cream-50/75 dark:bg-sage-900/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl hover:shadow-2xl dark:shadow-cream-300/20 transition-all duration-500 hover:-translate-y-2 border border-sage-200 dark:border-sage-700 animate-slide-up">
+                            <h3 class="text-3xl font-serif font-semibold mb-3 text-sage-800 dark:text-cream-100 group-hover:text-sage-600 dark:group-hover:text-cream-200 transition-colors duration-300">
+                                {{ .Title }}
+                            </h3>
+                            <p class="text-sage-500 dark:text-sage-300 text-sm mb-5 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                {{ .Date }}
+                            </p>
+                            {{ if .Committee }}
+                                {{ $committeeKey := .Committee }}
+                                {{ $committeeName := "" }}
+                                {{ range $.Committees }}
+                                    {{ if eq .Key $committeeKey }}
+                                        {{ $committeeName = .Name }}
+                                    {{ end }}
+                                {{ end }}
+                                <div class="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-sage-600 dark:text-sage-300 bg-sage-100/60 dark:bg-sage-800/60 border border-sage-200 dark:border-sage-700 rounded-full px-3 py-1 mb-5">
+                                    <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A3 3 0 017 12h10a3 3 0 011.879 5.304l-5.632 4.69a2 2 0 01-2.494 0l-5.632-4.69zM6 9a6 6 0 1112 0" />
+                                    </svg>
+                                    {{ if $committeeName }}
+                                        {{ $committeeName }}
+                                    {{ else }}
+                                        {{ $committeeKey }}
+                                    {{ end }}
+                                </div>
+                            {{ end }}
+                            <div class="prose prose-slate dark:prose-invert max-w-none">
+                                <p class="text-sage-700 dark:text-cream-200 leading-relaxed">{{ .Content }}</p>
+                            </div>
+                            <div class="mt-6 pt-6 border-t border-sage-200 dark:border-sage-700">
+                                <div class="flex items-center text-sage-600 dark:text-sage-400 text-sm group-hover:text-sage-700 dark:group-hover:text-cream-200 transition-colors duration-300">
+                                    <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    Shared with care
+                                </div>
+                                {{ if $.IsAdmin }}
+                                <div class="mt-4 flex flex-wrap gap-3">
+                                    <a href="/admin/posts/{{ .ID }}/edit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-sage-300 dark:border-sage-600 text-sage-700 dark:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800 transition-all duration-300">
+                                        Edit
+                                    </a>
+                                    <form method="POST" action="/admin/posts/{{ .ID }}/delete" onsubmit="return confirm('Delete this dispatch?');">
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-300 dark:border-red-600 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 transition-all duration-300">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                                {{ end }}
+                            </div>
+                        </article>
+                    {{ end }}
+
+                    {{ if not .Posts.Posts }}
+                        <div class="bg-gradient-to-br from-cream-50 to-sage-100 dark:from-sage-900/30 dark:to-sage-800/20 border-2 border-dashed border-sage-200 dark:border-sage-600 text-center rounded-3xl p-12 backdrop-blur-sm animate-fade-in" role="alert">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-sage-500 dark:text-cream-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-xl font-serif font-semibold text-sage-800 dark:text-cream-100 mb-2">No bulletins yet</p>
+                            <p class="text-sage-600 dark:text-cream-200">Publish the first council update for the C'29 cohort.</p>
+                            <a href="/create-posts.html" class="inline-block mt-6 bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                                Submit an Update
+                            </a>
+                        </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group">
+        <svg class="w-6 h-6 block dark:hidden group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg class="w-6 h-6 hidden dark:block group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+
+    <script>
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+</body>
+</html>

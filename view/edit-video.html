@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Media Reel - VC C'29 Student Union</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assests/VictoLogo.jpg" type="image/jpeg">
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'sage': {
+                            50: '#f6f6f6', 100: '#e8e8e8', 200: '#d8d8d8', 300: '#c6c6c6',
+                            400: '#a5a5a5', 500: '#8a8a8a', 600: '#6f6f6f', 700: '#515151',
+                            800: '#373737', 900: '#171717',
+                        },
+                        'cream': {
+                            50: '#fcfcfc', 100: '#f2f2f2', 200: '#e6e6e6', 300: '#dadada', 400: '#cecece',
+                        },
+                        'lavender': {
+                            50: '#fdfdfd', 100: '#ececec', 200: '#d6d6d6', 300: '#bebebe', 400: '#a4a4a4', 500: '#8a8a8a',
+                        },
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'Georgia', 'serif'],
+                        'sans': ['"Source Sans 3"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle at 12px 12px, rgba(23, 23, 23, 0.18) 0, rgba(23, 23, 23, 0.18) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.5;
+            z-index: -1;
+        }
+        html.dark body::before {
+            background-image: radial-gradient(circle at 12px 12px, rgba(204, 204, 204, 0.18) 0, rgba(204, 204, 204, 0.18) 1px, transparent 1px);
+            opacity: 0.32;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at top, rgba(23, 23, 23, 0.28), transparent 55%), radial-gradient(circle at bottom, rgba(99, 99, 99, 0.22), transparent 45%);
+            z-index: -1;
+        }
+        html.dark body::after {
+            background: radial-gradient(circle at top, rgba(0, 0, 0, 0.82), transparent 55%), radial-gradient(circle at bottom, rgba(136, 136, 136, 0.36), transparent 45%);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-cream-50 via-cream-200 to-sage-100 dark:from-black dark:via-sage-900 dark:to-sage-800 text-sage-800 dark:text-cream-100 font-sans transition-colors duration-500">
+
+    {{template "nav" .}}
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="flex justify-center">
+            <div class="w-full md:w-10/12 lg:w-8/12">
+                <div class="text-center mb-12 animate-fade-in">
+                    <h1 class="text-5xl md:text-6xl font-serif font-bold mb-4 bg-gradient-to-r from-sage-900 via-sage-500 to-sage-800 dark:from-cream-100 dark:via-cream-300 dark:to-cream-200 bg-clip-text text-transparent">
+                        Update Heritage Reel
+                    </h1>
+                    <p class="text-lg text-sage-600 dark:text-cream-200 font-light max-w-2xl mx-auto">
+                        Adjust the spotlight on "{{ if .EditVideo }}{{ .EditVideo.Title }}{{ end }}" for the media archives. <a href="/videos.html" class="text-sage-700 dark:text-cream-100 underline underline-offset-4 decoration-sage-400 dark:decoration-cream-300">Back to media library</a>
+                    </p>
+                </div>
+
+                <div class="bg-cream-50/75 dark:bg-sage-900/70 backdrop-blur-lg rounded-3xl p-10 shadow-2xl border border-sage-200 dark:border-sage-700 animate-slide-up">
+                    <form method="POST" action="/admin/videos/{{ if .EditVideo }}{{ .EditVideo.ID }}{{ end }}/edit" class="space-y-8">
+                        <div class="group">
+                            <label for="videoTitle" class="block text-sm font-semibold text-sage-700 dark:text-cream-200 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                                </svg>
+                                Reel Title
+                            </label>
+                            <input 
+                                name="video-title" 
+                                type="text" 
+                                class="w-full px-6 py-4 rounded-2xl bg-cream-50 dark:bg-sage-900 border-2 border-sage-200 dark:border-sage-700 text-sage-800 dark:text-cream-100 placeholder-sage-400 dark:placeholder-sage-500 focus:outline-none focus:ring-4 focus:ring-sage-400 dark:focus:ring-sage-600 focus:border-sage-500 transition-all duration-300 font-serif text-lg"
+                                id="videoTitle" 
+                                value="{{ if .EditVideo }}{{ .EditVideo.Title }}{{ end }}"
+                                required>
+                        </div>
+
+                        <div class="group">
+                            <label for="videoURL" class="block text-sm font-semibold text-sage-700 dark:text-cream-200 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                </svg>
+                                Media URL
+                            </label>
+                            <input 
+                                name="url" 
+                                type="url" 
+                                class="w-full px-6 py-4 rounded-2xl bg-cream-50 dark:bg-sage-900 border-2 border-sage-200 dark:border-sage-700 text-sage-800 dark:text-cream-100 placeholder-sage-400 dark:placeholder-sage-500 focus:outline-none focus:ring-4 focus:ring-sage-400 dark:focus:ring-sage-600 focus:border-sage-500 transition-all duration-300 font-sans"
+                                id="videoURL" 
+                                value="{{ if .EditVideo }}{{ .EditVideo.URL }}{{ end }}"
+                                required>
+                        </div>
+
+                        <div class="group">
+                            <label for="videoImage" class="block text-sm font-semibold text-sage-700 dark:text-cream-200 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Thumbnail Image URL
+                            </label>
+                            <input 
+                                name="image" 
+                                type="url" 
+                                class="w-full px-6 py-4 rounded-2xl bg-cream-50 dark:bg-sage-900 border-2 border-sage-200 dark:border-sage-700 text-sage-800 dark:text-cream-100 placeholder-sage-400 dark:placeholder-sage-500 focus:outline-none focus:ring-4 focus:ring-sage-400 dark:focus:ring-sage-600 focus:border-sage-500 transition-all duration-300 font-sans"
+                                id="videoImage" 
+                                value="{{ if .EditVideo }}{{ .EditVideo.Image }}{{ end }}"
+                                required>
+                        </div>
+
+                        <div class="pt-6 border-t-2 border-dashed border-sage-200 dark:border-sage-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div class="text-sm text-sage-500 dark:text-sage-400">
+                                Reel ID {{ if .EditVideo }}#{{ .EditVideo.ID }}{{ else }}&mdash;{{ end }}
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <a href="/videos.html" class="inline-flex items-center justify-center px-6 py-3 rounded-2xl border-2 border-sage-300 dark:border-sage-600 text-sage-700 dark:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800 transition-all duration-300">
+                                    Cancel
+                                </a>
+                                <button type="submit" class="group inline-flex items-center justify-center bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-serif font-semibold rounded-2xl px-8 py-3 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-500">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group">
+        <svg class="w-6 h-6 block dark:hidden group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg class="w-6 h-6 hidden dark:block group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+
+    <script>
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+</body>
+</html>

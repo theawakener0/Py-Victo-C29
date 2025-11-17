@@ -1,0 +1,29 @@
+# Binaries
+/dist/
+/build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go
+bin/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Env
+.env
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# venv
+/.venv/
+
+# Uploads
+/uploads/

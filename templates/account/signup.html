@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Register • VC C'29{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+    <div class="flex justify-center">
+        <div class="w-full max-w-xl">
+            <div class="bg-cream-50/85 dark:bg-sage-900/75 border border-sage-200 dark:border-sage-700 rounded-3xl shadow-xl p-8">
+                <h1 class="text-3xl font-serif text-sage-800 dark:text-cream-100 mb-6 text-center">Join the Union</h1>
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                    <div>
+                        <label class="block text-sm font-semibold text-sage-600 dark:text-cream-200 mb-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="w-full inline-flex justify-center px-4 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white">Create Account</button>
+                </form>
+                <p class="mt-6 text-center text-sm text-sage-500 dark:text-sage-300">Already registered? <a href="{% url 'login' %}" class="text-lavender-500 dark:text-lavender-300 underline">Sign in</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

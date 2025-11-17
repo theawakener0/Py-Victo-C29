@@ -1,0 +1,40 @@
+{{define "admin_chat_section"}}
+<section id="admin-chat-section" class="bg-cream-50/85 dark:bg-sage-900/75 backdrop-blur rounded-3xl border border-sage-100 dark:border-sage-700 shadow-xl p-6 md:p-8 flex flex-col">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-serif text-sage-800 dark:text-cream-100">Leadership Stream</h2>
+        <span class="text-xs uppercase tracking-widest text-sage-400 dark:text-cream-400">Real-time briefs</span>
+    </div>
+
+    <div id="chat-message-list" class="overflow-y-auto pr-2" style="max-height: 520px;">
+        {{range .AdminHub.Messages}}
+        <article class="mb-4 last:mb-0">
+            <div class="flex {{if .IsMine}}justify-end{{else}}justify-start{{end}}">
+                <div class="max-w-[85%] rounded-2xl px-5 py-4 shadow-lg border {{if .IsMine}}bg-gradient-to-r from-sage-700 to-sage-900 text-white border-sage-700 dark:from-sage-500 dark:to-sage-600{{else}}bg-white/70 dark:bg-sage-800/80 border-sage-200 dark:border-sage-700{{end}}">
+                    <div class="flex items-center justify-between mb-2 gap-3">
+                        <h3 class="text-sm font-semibold tracking-wide {{if .IsMine}}text-cream-100{{else}}text-sage-700 dark:text-cream-100{{end}}">{{.AuthorName}}</h3>
+                        <span class="text-[11px] uppercase tracking-wider {{if .IsMine}}text-cream-200/80{{else}}text-sage-400 dark:text-cream-400{{end}}">{{if .CreatedAtHuman}}{{.CreatedAtHuman}}{{else}}&mdash;{{end}}</span>
+                        {{if and (gt .ID 0) (or .IsMine $.IsAdmin)}}
+                        <form method="POST" action="/admin/chat/messages/{{.ID}}/delete" hx-post="/admin/chat/messages/{{.ID}}/delete" hx-target="#admin-chat-section" hx-swap="outerHTML" class="shrink-0" hx-confirm="Remove this message?" >
+                            <button type="submit" class="text-[11px] uppercase tracking-wider px-3 py-1 rounded-full border {{if .IsMine}}border-cream-200/70 text-cream-200 hover:bg-cream-100/10{{else}}border-sage-300 text-sage-500 hover:bg-sage-100/40 dark:text-cream-200 dark:border-sage-500 dark:hover:bg-sage-800{{end}}">Delete</button>
+                        </form>
+                        {{end}}
+                    </div>
+                    <p class="text-sm leading-relaxed whitespace-pre-line">{{.Body}}</p>
+                </div>
+            </div>
+        </article>
+        {{else}}
+        <p class="text-sm text-sage-500 dark:text-sage-300 italic">No messages yet—share the first update with council leadership.</p>
+        {{end}}
+    </div>
+
+    <form method="POST" action="/admin/chat/messages/" hx-post="/admin/chat/messages/" hx-target="#admin-chat-section" hx-swap="outerHTML" hx-on::after-request="this.reset();" class="mt-6 bg-white/70 dark:bg-sage-800/80 border border-sage-200 dark:border-sage-700 rounded-2xl p-5 shadow-md">
+        <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="admin-chat-message">Log an Update</label>
+        <textarea id="admin-chat-message" name="message" rows="3" maxlength="4000" class="w-full resize-none rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sage-400 dark:focus:ring-sage-500" placeholder="Share decisions, blockers, or quick wins..."></textarea>
+        <div class="flex justify-between items-center mt-3">
+            <span class="text-[11px] tracking-wider uppercase text-sage-400 dark:text-cream-400">Max 4000 characters</span>
+            <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white font-semibold text-sm shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105">Send Update</button>
+        </div>
+    </form>
+</section>
+{{end}}

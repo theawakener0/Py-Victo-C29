@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victoria College Legacy - VC C'29 Student Union</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assests/VictoLogo.jpg" type="image/jpeg">
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'sage': {
+                            50: '#f6f6f6',
+                            100: '#e8e8e8',
+                            200: '#d8d8d8',
+                            300: '#c6c6c6',
+                            400: '#a5a5a5',
+                            500: '#8a8a8a',
+                            600: '#6f6f6f',
+                            700: '#515151',
+                            800: '#373737',
+                            900: '#171717',
+                        },
+                        'cream': {
+                            50: '#fcfcfc',
+                            100: '#f2f2f2',
+                            200: '#e6e6e6',
+                            300: '#dadada',
+                            400: '#cecece',
+                        },
+                        'lavender': {
+                            50: '#fdfdfd',
+                            100: '#ececec',
+                            200: '#d6d6d6',
+                            300: '#bebebe',
+                            400: '#a4a4a4',
+                            500: '#8a8a8a',
+                            600: '#6b6b6b',
+                        },
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'Georgia', 'serif'],
+                        'sans': ['"Source Sans 3"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <style>
+        body {
+            position: relative;
+            animation: linearReveal 0.75s ease-out both;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle at 12px 12px, rgba(23, 23, 23, 0.18) 0, rgba(23, 23, 23, 0.18) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.5;
+            z-index: -2;
+        }
+        html.dark body::before {
+            background-image: radial-gradient(circle at 12px 12px, rgba(204, 204, 204, 0.18) 0, rgba(204, 204, 204, 0.18) 1px, transparent 1px);
+            opacity: 0.32;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at top, rgba(23, 23, 23, 0.28), transparent 55%), radial-gradient(circle at bottom, rgba(99, 99, 99, 0.22), transparent 45%);
+            z-index: -3;
+        }
+        html.dark body::after {
+            background: radial-gradient(circle at top, rgba(0, 0, 0, 0.82), transparent 55%), radial-gradient(circle at bottom, rgba(136, 136, 136, 0.36), transparent 45%);
+        }
+        #page-progress {
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: 0.3rem;
+            background: linear-gradient(90deg, rgba(156, 163, 175, 0.18), transparent 70%);
+            z-index: 50;
+            overflow: hidden;
+        }
+        #page-progress span {
+            display: block;
+            height: 100%;
+            width: 100%;
+            transform: scaleX(0);
+            transform-origin: left center;
+            background: linear-gradient(90deg, rgba(229, 231, 235, 0.8), rgba(156, 163, 175, 0.85), rgba(75, 85, 99, 0.9));
+            transition: transform 0.2s ease-out;
+        }
+        .hero-aurora::before,
+        .hero-aurora::after {
+            content: '';
+            position: absolute;
+            inset: auto;
+            width: 80vw;
+            height: 80vw;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.55;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+        .hero-aurora::before {
+            top: -25%;
+            left: -20%;
+            background: radial-gradient(circle at center, rgba(240, 240, 240, 0.65), transparent 65%);
+            animation: auroraLeft 18s ease-in-out infinite alternate;
+        }
+        .hero-aurora::after {
+            bottom: -30%;
+            right: -10%;
+            background: radial-gradient(circle at center, rgba(120, 120, 120, 0.55), transparent 65%);
+            animation: auroraRight 22s ease-in-out infinite alternate;
+        }
+        .hero-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .section-fade {
+            position: relative;
+            overflow: hidden;
+        }
+        .section-fade::before,
+        .section-fade::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 11rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .section-fade::before {
+            top: -1px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+        }
+        .section-fade::after {
+            bottom: -1px;
+            background: linear-gradient(0deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+        }
+        html.dark .section-fade::before {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0));
+        }
+        html.dark .section-fade::after {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0));
+        }
+        .section-fade > .section-fade-bg {
+            position: absolute;
+            z-index: 0;
+        }
+        .timeline-axis {
+            position: absolute;
+            inset: 0;
+            margin: 0 auto;
+            width: 2px;
+            background: linear-gradient(180deg, rgba(148, 163, 184, 0.4), rgba(100, 116, 139, 0.28), rgba(148, 163, 184, 0));
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            position: relative;
+            border-left: 1px solid rgba(148, 163, 184, 0.35);
+            padding-left: 2rem;
+        }
+        .timeline-item .timeline-dot {
+            position: absolute;
+            top: 1.1rem;
+            left: -0.55rem;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #f5f5f5, #6b7280);
+            box-shadow: 0 0 0 6px rgba(148, 163, 184, 0.2);
+        }
+        .timeline-panel {
+            position: relative;
+            border-radius: 1.75rem;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(203, 213, 225, 0.35);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 45px rgba(15, 23, 42, 0.1);
+        }
+        .timeline-year-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            text-align: center;
+        }
+        .timeline-year {
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: clamp(2.2rem, 3vw, 3.4rem);
+            letter-spacing: 0.12em;
+            background: linear-gradient(90deg, rgba(51, 65, 85, 0.85), rgba(17, 24, 39, 0.6));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        html.dark .timeline-item {
+            border-color: rgba(71, 85, 105, 0.45);
+        }
+        html.dark .timeline-item .timeline-dot {
+            box-shadow: 0 0 0 6px rgba(51, 65, 85, 0.45);
+        }
+        html.dark .timeline-panel {
+            background: rgba(15, 23, 42, 0.82);
+            border-color: rgba(71, 85, 105, 0.45);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
+        }
+        .alumni-strip {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.75rem 0;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+        }
+        .alumni-strip::-webkit-scrollbar {
+            height: 6px;
+        }
+        .alumni-strip::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.45);
+            border-radius: 999px;
+        }
+        .alumni-card {
+            scroll-snap-align: center;
+            min-width: min(280px, 75vw);
+            padding: 1.85rem;
+            border-radius: 1.5rem;
+            background: rgba(248, 250, 252, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            transition: transform 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
+        }
+        .alumni-card.is-active {
+            transform: translateY(-14px) scale(1.02);
+            border-color: rgba(107, 114, 128, 0.75);
+            box-shadow: 0 24px 42px rgba(30, 41, 59, 0.22);
+        }
+        .alumni-card:focus-visible {
+            outline: 2px solid transparent;
+            box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.55);
+        }
+        html.dark .alumni-card {
+            background: rgba(15, 23, 42, 0.72);
+            border-color: rgba(71, 85, 105, 0.45);
+        }
+        html.dark .alumni-card.is-active {
+            border-color: rgba(209, 213, 219, 0.65);
+            box-shadow: 0 24px 42px rgba(15, 23, 42, 0.4);
+        }
+        .alumni-detail {
+            padding: 2.5rem;
+            border-radius: 1.85rem;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(203, 213, 225, 0.35);
+            box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.35);
+            backdrop-filter: blur(16px);
+        }
+        html.dark .alumni-detail {
+            background: rgba(19, 26, 40, 0.82);
+            border-color: rgba(71, 85, 105, 0.45);
+            box-shadow: inset 0 1px 0 rgba(51, 65, 85, 0.55);
+        }
+        [data-animate] {
+            opacity: 0;
+            transform: translate3d(0, 38px, 0) scale(0.97);
+            transition: opacity 0.9s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transition-delay: var(--delay, 0s);
+        }
+        [data-animate="slide-right"] {
+            transform: translate3d(-48px, 24px, 0) scale(0.97);
+        }
+        [data-animate="slide-left"] {
+            transform: translate3d(48px, 24px, 0) scale(0.97);
+        }
+        [data-animate="zoom"] {
+            transform: scale(0.94);
+        }
+        [data-animate].is-visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+        @keyframes linearReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes auroraLeft {
+            0% {
+                transform: translate3d(0, 0, 0) scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate3d(12%, 8%, 0) scale(1.15);
+                opacity: 0.72;
+            }
+        }
+        @keyframes auroraRight {
+            0% {
+                transform: translate3d(0, 0, 0) scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate3d(-10%, -6%, 0) scale(1.18);
+                opacity: 0.7;
+            }
+        }
+        @media (min-width: 1024px) {
+            .timeline-item {
+                border-left: transparent;
+                padding-left: 0;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+                gap: 3.5rem;
+                align-items: flex-start;
+            }
+            .timeline-item .timeline-dot {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body {
+                animation: none;
+            }
+            #page-progress span {
+                transition: none;
+            }
+            [data-animate] {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+            .hero-aurora::before,
+            .hero-aurora::after {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-white via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black text-gray-800 dark:text-gray-100 font-sans transition-colors duration-500">
+
+    {{template "nav" .}}
+
+    <div id="page-progress" aria-hidden="true">
+        <span id="page-progress-bar"></span>
+    </div>
+
+    <main class="relative isolate overflow-hidden">
+    <section class="section-fade relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-black/95 via-gray-900/90 to-black/95 dark:from-black dark:via-gray-950 dark:to-black text-gray-100 hero-aurora">
+            <div class="section-fade-bg absolute inset-0 hero-grid opacity-30 dark:opacity-20"></div>
+            <div class="absolute inset-x-0 top-24 flex justify-center gap-8 opacity-70 pointer-events-none z-20">
+                <div class="hidden md:flex items-center gap-3 bg-white/10 dark:bg-white/5 border border-white/20 rounded-full px-6 py-2 text-xs uppercase tracking-[0.3em]">Elite Learning</div>
+                <div class="hidden md:flex items-center gap-3 bg-white/10 dark:bg-white/5 border border-white/20 rounded-full px-6 py-2 text-xs uppercase tracking-[0.3em]">Mediterranean Heritage</div>
+            </div>
+            <div class="relative z-10 max-w-4xl text-center px-6 space-y-7">
+                <p class="uppercase tracking-[0.45em] text-xs md:text-sm text-gray-300/85">Cuncti Gens Una Sumus</p>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif font-light leading-tight">Victoria College Legacy</h1>
+                <p class="text-lg md:text-xl text-gray-200/85 font-light leading-relaxed">A cinematic passage through Alexandria's shoreline alma mater, where British scholastic rigor met Mediterranean brilliance to raise generations of world-shaping leaders.</p>
+                <div class="flex flex-wrap items-center justify-center gap-4 text-xs uppercase tracking-[0.3em] text-gray-300/75">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-2">Founded 1902</span>
+                    <span class="inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-2">Alexandria, Egypt</span>
+                    <span class="inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-2">British · Arabic · French</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="#timeline" class="inline-flex items-center gap-2 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 dark:text-black font-semibold px-6 py-3 rounded-full shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                        <span>Scroll the Story</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v12m0 0l-4-4m4 4l4-4" />
+                        </svg>
+                    </a>
+                    <a href="/" class="inline-flex items-center gap-2 border border-gray-200/70 text-gray-100 font-medium px-6 py-3 rounded-full hover:bg-white/10 hover:-translate-y-1 transition-all duration-300">
+                        Return Home
+                    </a>
+                </div>
+            </div>
+            <div class="absolute bottom-12 inset-x-0 flex flex-col items-center text-[0.6rem] uppercase tracking-[0.6em] text-gray-300/70 z-20">
+                <span>Scroll</span>
+                <span class="mt-4 h-16 w-px bg-gradient-to-b from-transparent via-gray-300/70 to-transparent animate-pulse"></span>
+            </div>
+        </section>
+
+        <section id="timeline" class="section-fade relative py-24 lg:py-32 overflow-hidden bg-gradient-to-b from-white/92 via-gray-100/94 to-gray-200/82 dark:from-black/82 dark:via-gray-900/78 dark:to-gray-800/70">
+            <div class="section-fade-bg absolute inset-0 hero-grid opacity-10 dark:opacity-10"></div>
+            <div class="section-fade-bg absolute inset-0 pointer-events-none bg-gradient-to-b from-white/30 via-transparent to-white/10 dark:from-white/5 dark:to-white/5"></div>
+            <div class="relative z-10 max-w-6xl mx-auto px-6">
+                <div class="text-center space-y-4" data-animate="zoom">
+                    <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-gray-500 dark:text-gray-400">Chronicle of a College</p>
+                    <h2 class="text-3xl md:text-5xl font-serif font-light text-gray-800 dark:text-gray-100">A Century of Resonance</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600 dark:text-gray-300 leading-relaxed">Every corridor, assembly, and anthem at Victoria College carries the pulse of a region that learned together. Follow the scenes that molded the College’s collective voice.</p>
+                </div>
+                <div class="relative mt-16">
+                    <div class="timeline-axis hidden lg:block" aria-hidden="true"></div>
+                    <div class="space-y-16">
+                        <article class="timeline-item" data-animate="slide-right" style="--delay: 0.05s;">
+                            <span class="timeline-dot" aria-hidden="true"></span>
+                            <div class="timeline-panel lg:order-1">
+                                <span class="lg:hidden text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">1902 · Early History</span>
+                                <h3 class="text-2xl font-serif font-semibold text-gray-800 dark:text-gray-100 mt-4">Early History</h3>
+                                <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">Founded by Evelyn Baring amid British administration, Victoria College translated the rituals of Eton and Harrow to Alexandria’s shoreline, cultivating leaders fluent in both empire and Arab intellect.</p>
+                                <ul class="mt-5 space-y-3 text-gray-600 dark:text-gray-300 leading-relaxed">
+                                    <li class="flex items-start gap-3"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-gray-400"></span>Lessons delivered in English, anchored by compulsory Arabic and French for trilingual excellence.</li>
+                                    <li class="flex items-start gap-3"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-gray-400"></span>British prefect systems blended with Eastern codes of courtesy and collective honor.</li>
+                                </ul>
+                            </div>
+                            <div class="timeline-year-wrap lg:order-2">
+                                <span class="timeline-year">1902</span>
+                                <span class="text-[0.65rem] uppercase tracking-[0.35em] text-gray-400 dark:text-gray-400">Early History</span>
+                            </div>
+                            <div class="hidden lg:block lg:order-3"></div>
+                        </article>
+
+                        <article class="timeline-item" data-animate="slide-left" style="--delay: 0.08s;">
+                            <span class="timeline-dot" aria-hidden="true"></span>
+                            <div class="hidden lg:block"></div>
+                            <div class="timeline-year-wrap lg:order-2">
+                                <span class="timeline-year">1902–1930s</span>
+                                <span class="text-[0.65rem] uppercase tracking-[0.35em] text-gray-400 dark:text-gray-400">Development & Prestige</span>
+                            </div>
+                            <div class="timeline-panel lg:order-3">
+                                <span class="lg:hidden text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">1902–1930s · Development & Prestige</span>
+                                <h3 class="text-2xl font-serif font-semibold text-gray-800 dark:text-gray-100 mt-4">Development & Prestige</h3>
+                                <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">From the Lazarette to El Siouf Beach, Victoria blossomed into an elite sanctuary that gathered princes, diplomats, and artists from across the Middle East.</p>
+                                <ul class="mt-5 space-y-3 text-gray-600 dark:text-gray-300 leading-relaxed">
+                                    <li class="flex items-start gap-3"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-gray-400"></span>Renowned for disciplined scholarship, debating halls, and choral assemblies that forged unity.</li>
+                                    <li class="flex items-start gap-3"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-gray-400"></span>Hosted a cosmopolitan student body representing Egypt, Jordan, Iraq, Lebanon, Palestine, and more.</li>
+                                    <li class="flex items-start gap-3"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-gray-400"></span>Symbols and ceremonies celebrated cross-cultural respect as a daily ritual.</li>
+                                </ul>
+                            </div>
+                        </article>
+
+                        <article class="timeline-item" data-animate="slide-right" style="--delay: 0.12s;">
+                            <span class="timeline-dot" aria-hidden="true"></span>
+                            <div class="timeline-panel lg:order-1">
+                                <span class="lg:hidden text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">1950s · Post-Colonial Transition</span>
+                                <h3 class="text-2xl font-serif font-semibold text-gray-800 dark:text-gray-100 mt-4">Post-Colonial Transition</h3>
+                                <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">The 1952 Revolution and 1956 Suez Crisis ushered a new chapter. British staff departed, yet the school persisted under Egyptian leadership as Victory College, translating tradition into a national story.</p>
+                                <p class="mt-5 text-gray-600 dark:text-gray-300 leading-relaxed">This era proved Victoria’s resilience—rituals were reimagined, not erased, sustaining the school’s shared ethos amid political change.</p>
+                            </div>
+                            <div class="timeline-year-wrap lg:order-2">
+                                <span class="timeline-year">1950s</span>
+                                <span class="text-[0.65rem] uppercase tracking-[0.35em] text-gray-400 dark:text-gray-400">Post-Colonial Transition</span>
+                            </div>
+                            <div class="hidden lg:block lg:order-3"></div>
+                        </article>
+
+                        <article class="timeline-item" data-animate="slide-left" style="--delay: 0.16s;">
+                            <span class="timeline-dot" aria-hidden="true"></span>
+                            <div class="hidden lg:block"></div>
+                            <div class="timeline-year-wrap lg:order-2">
+                                <span class="timeline-year">Legacy</span>
+                                <span class="text-[0.65rem] uppercase tracking-[0.35em] text-gray-400 dark:text-gray-400">Notable Voices</span>
+                            </div>
+                            <div class="timeline-panel lg:order-3">
+                                <span class="lg:hidden text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">Legacy · Notable Voices</span>
+                                <h3 class="text-2xl font-serif font-semibold text-gray-800 dark:text-gray-100 mt-4">Notable Voices</h3>
+                                <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">Victoria College alumni carried the crest into royal courts, cinema, diplomacy, and scholarship—proof that one campus could shape countless stages.</p>
+                                <p class="mt-5 text-gray-600 dark:text-gray-300 leading-relaxed">Their journeys keep the College’s motto alive: “We are all one people” resonating across continents.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="alumni" class="section-fade relative py-24 lg:py-32 overflow-hidden bg-gradient-to-b from-gray-100/90 via-gray-50/92 to-white/95 dark:from-gray-900/70 dark:via-gray-950/72 dark:to-black/80">
+            <div class="section-fade-bg absolute inset-0 hero-grid opacity-10 dark:opacity-10"></div>
+            <div class="relative z-10 max-w-6xl mx-auto px-6 space-y-12">
+                <div class="text-center space-y-4" data-animate="zoom" style="--delay: 0.1s;">
+                    <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-gray-500 dark:text-gray-400">Portraits in Motion</p>
+                    <h2 class="text-3xl md:text-4xl font-serif font-light text-gray-800 dark:text-gray-100">Alumni Illuminated</h2>
+                    <p class="max-w-3xl mx-auto text-gray-600 dark:text-gray-300 leading-relaxed">Hover, tap, or focus on each name to surface the storylines that have carried Victoria College across the globe.</p>
+                </div>
+                <div class="alumni-strip" role="listbox" aria-label="Notable alumni highlights">
+                    <button type="button" class="alumni-card text-left" data-alumni data-name="King Hussein of Jordan" data-title="Monarch & Statesman" data-description="From Victoria’s classrooms to the Hashemite throne, King Hussein guided Jordan through modernization, diplomacy, and regional transformation." data-era="Class of 1951" aria-label="King Hussein of Jordan" aria-pressed="false">
+                        <div class="flex items-center justify-between mb-3 text-gray-500 dark:text-gray-300 uppercase tracking-[0.28em] text-[0.65rem]">Royal Leadership<span class="text-gray-400 dark:text-gray-400">Era</span></div>
+                        <p class="text-xl font-serif font-medium text-gray-700 dark:text-gray-100">King Hussein of Jordan</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">Monarch & Statesman</p>
+                    </button>
+                    <button type="button" class="alumni-card text-left" data-alumni data-name="Omar Sharif" data-title="Actor & Cultural Icon" data-description="Internationally acclaimed for Doctor Zhivago and Lawrence of Arabia, Omar Sharif projected Victoria’s dramatic flair onto the world stage." data-era="Class of 1943" aria-label="Omar Sharif" aria-pressed="false">
+                        <div class="flex items-center justify-between mb-3 text-gray-500 dark:text-gray-300 uppercase tracking-[0.28em] text-[0.65rem]">Performing Arts<span class="text-gray-400 dark:text-gray-400">Era</span></div>
+                        <p class="text-xl font-serif font-medium text-gray-700 dark:text-gray-100">Omar Sharif</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">Actor & Cultural Icon</p>
+                    </button>
+                    <button type="button" class="alumni-card text-left" data-alumni data-name="Edward Said" data-title="Scholar & Author" data-description="Edward Said’s seminal work <em>Orientalism</em> reframed discourse around identity, power, and culture—echoing Victoria’s cross-cultural mission." data-era="Class of 1951" aria-label="Edward Said" aria-pressed="false">
+                        <div class="flex items-center justify-between mb-3 text-gray-500 dark:text-gray-300 uppercase tracking-[0.28em] text-[0.65rem]">Critical Thought<span class="text-gray-400 dark:text-gray-400">Era</span></div>
+                        <p class="text-xl font-serif font-medium text-gray-700 dark:text-gray-100">Edward Said</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">Scholar & Author</p>
+                    </button>
+                    <button type="button" class="alumni-card text-left" data-alumni data-name="Boutros Boutros-Ghali" data-title="Diplomat & UN Leader" data-description="Carrying Victoria’s ethos of unity, Boutros Boutros-Ghali served as UN Secretary-General, mediating global conversations in the 1990s." data-era="Class of 1937" aria-label="Boutros Boutros-Ghali" aria-pressed="false">
+                        <div class="flex items-center justify-between mb-3 text-gray-500 dark:text-gray-300 uppercase tracking-[0.28em] text-[0.65rem]">Global Diplomacy<span class="text-gray-400 dark:text-gray-400">Era</span></div>
+                        <p class="text-xl font-serif font-medium text-gray-700 dark:text-gray-100">Boutros Boutros-Ghali</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">Diplomat & UN Leader</p>
+                    </button>
+                    <button type="button" class="alumni-card text-left" data-alumni data-name="Mohamed El-Fayed" data-title="Entrepreneur" data-description="Entrepreneur Mohamed El-Fayed transformed Victoria's global networks into ventures spanning retail, sport, and philanthropy." data-era="Class of 1940s" aria-label="Mohamed El-Fayed" aria-pressed="false">
+                        <div class="flex items-center justify-between mb-3 text-gray-500 dark:text-gray-300 uppercase tracking-[0.28em] text-[0.65rem]">Enterprise<span class="text-gray-400 dark:text-gray-400">Era</span></div>
+                        <p class="text-xl font-serif font-medium text-gray-700 dark:text-gray-100">Mohamed El-Fayed</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">Entrepreneur</p>
+                    </button>
+                </div>
+                <div class="alumni-detail text-gray-700 dark:text-gray-100" id="alumni-detail" role="status" aria-live="polite">
+                    <p class="text-sm uppercase tracking-[0.35em] text-gray-400 dark:text-gray-400 mb-3">Tap to Reveal</p>
+                    <h4 class="text-2xl font-serif font-medium">Discover Victoria’s hallmarks through the voices that carried them worldwide.</h4>
+                    <p class="mt-2 text-gray-600 dark:text-gray-300 leading-relaxed">Select a figure above to see how Victoria College’s corridors sparked their journey.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-fade relative py-24 lg:py-28 bg-gradient-to-b from-transparent via-gray-50/85 to-white dark:from-transparent dark:via-gray-900/55 dark:to-gray-900/80">
+            <div class="section-fade-bg absolute inset-0 hero-grid opacity-10 dark:opacity-10"></div>
+            <div class="relative z-10 max-w-4xl mx-auto text-center px-6 space-y-6" data-animate="zoom" style="--delay: 0.12s;">
+                <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-gray-500 dark:text-gray-400">Legacy in Motion</p>
+                <h2 class="text-3xl md:text-4xl font-serif font-light text-gray-800 dark:text-gray-100">Carry the Story Forward</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">Victoria College remains a sanctuary for curiosity and cultural exchange. Each cohort inherits a torch lit by revolutionaries, artists, and diplomats. Let today’s projects and tomorrow’s dreams add new chapters to this narrative of unity.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="/videos.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-gray-800 to-black dark:from-gray-300 dark:to-gray-100 text-white dark:text-black font-semibold px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        Experience the Media Room
+                    </a>
+                    <a href="/posts.html" class="inline-flex items-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 font-medium px-6 py-3 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 hover:-translate-y-1 transition-all duration-300">
+                        Read Union Dispatches
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button onclick="toggleTheme()" 
+    class="fixed bottom-6 right-6 bg-gradient-to-br from-gray-700 to-black dark:from-gray-200 dark:to-gray-100 text-white dark:text-gray-900 p-4 rounded-full shadow-2xl hover:shadow-gray-700/40 dark:hover:shadow-gray-300/40 transform hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group"
+            aria-label="Toggle theme">
+        <svg class="hidden dark:block w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <svg class="block dark:hidden w-6 h-6 group-hover:-rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const animatedItems = document.querySelectorAll('[data-animate]');
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+                const animationObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.18,
+                    rootMargin: '0px 0px -10% 0px'
+                });
+
+                animatedItems.forEach(item => animationObserver.observe(item));
+            } else {
+                animatedItems.forEach(item => item.classList.add('is-visible'));
+            }
+
+            const progressBar = document.getElementById('page-progress-bar');
+            let ticking = false;
+
+            const updateProgress = () => {
+                if (!progressBar) {
+                    return;
+                }
+                const doc = document.documentElement;
+                const scrollTop = window.scrollY || doc.scrollTop;
+                const height = doc.scrollHeight - doc.clientHeight;
+                const progress = height > 0 ? scrollTop / height : 0;
+                progressBar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1).toFixed(4)})`;
+            };
+
+            const requestTick = () => {
+                if (!ticking) {
+                    ticking = true;
+                    window.requestAnimationFrame(() => {
+                        updateProgress();
+                        ticking = false;
+                    });
+                }
+            };
+
+            updateProgress();
+            window.addEventListener('scroll', requestTick, { passive: true });
+            window.addEventListener('resize', requestTick);
+
+            const alumniDetail = document.getElementById('alumni-detail');
+            const alumniCards = document.querySelectorAll('[data-alumni]');
+            const defaultDetail = alumniDetail ? alumniDetail.innerHTML : '';
+            let pinnedCard = null;
+
+            const renderDetail = (card) => {
+                if (!alumniDetail || !card) {
+                    return;
+                }
+                const name = card.dataset.name || '';
+                const title = card.dataset.title || '';
+                const description = card.dataset.description || '';
+                const era = card.dataset.era || '';
+                alumniDetail.innerHTML = `
+                    <p class="text-sm uppercase tracking-[0.35em] text-gray-400 dark:text-gray-400 mb-3">${era || 'Legacy Highlight'}</p>
+                    <h4 class="text-2xl font-serif font-medium">${name}</h4>
+                    <p class="mt-1 text-gray-500 dark:text-gray-300 uppercase tracking-[0.2em] text-xs">${title}</p>
+                    <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">${description}</p>
+                `;
+            };
+
+            const clearSelection = () => {
+                pinnedCard = null;
+                alumniCards.forEach(card => {
+                    card.classList.remove('is-active');
+                    card.setAttribute('aria-pressed', 'false');
+                });
+                if (alumniDetail) {
+                    alumniDetail.innerHTML = defaultDetail;
+                }
+            };
+
+            alumniCards.forEach(card => {
+                card.setAttribute('aria-pressed', 'false');
+
+                card.addEventListener('mouseenter', () => {
+                    if (pinnedCard) {
+                        return;
+                    }
+                    card.classList.add('is-active');
+                    renderDetail(card);
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    if (pinnedCard) {
+                        return;
+                    }
+                    card.classList.remove('is-active');
+                    if (alumniDetail) {
+                        alumniDetail.innerHTML = defaultDetail;
+                    }
+                });
+
+                card.addEventListener('click', () => {
+                    if (pinnedCard === card) {
+                        clearSelection();
+                        return;
+                    }
+
+                    pinnedCard = card;
+                    alumniCards.forEach(btn => {
+                        btn.classList.toggle('is-active', btn === card);
+                        btn.setAttribute('aria-pressed', btn === card ? 'true' : 'false');
+                    });
+                    renderDetail(card);
+                });
+
+                card.addEventListener('focus', () => {
+                    if (!pinnedCard) {
+                        card.classList.add('is-active');
+                        renderDetail(card);
+                    }
+                });
+
+                card.addEventListener('blur', () => {
+                    if (!pinnedCard) {
+                        card.classList.remove('is-active');
+                        if (alumniDetail) {
+                            alumniDetail.innerHTML = defaultDetail;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+
+            if (isDark) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
+</html>

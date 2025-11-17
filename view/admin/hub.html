@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Coordination Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assests/VictoLogo.jpg" type="image/jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'sage': {
+                            50: '#f6f6f6', 100: '#e8e8e8', 200: '#d8d8d8', 300: '#c6c6c6',
+                            400: '#a5a5a5', 500: '#8a8a8a', 600: '#6f6f6f', 700: '#515151',
+                            800: '#373737', 900: '#171717',
+                        },
+                        'cream': {
+                            50: '#fcfcfc', 100: '#f2f2f2', 200: '#e6e6e6', 300: '#dadada', 400: '#cecece',
+                        },
+                        'lavender': {
+                            50: '#fdfdfd', 100: '#ececec', 200: '#d6d6d6', 300: '#bebebe', 400: '#a4a4a4', 500: '#8a8a8a',
+                        },
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'Georgia', 'serif'],
+                        'sans': ['"Source Sans 3"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body {
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle at 12px 12px, rgba(23, 23, 23, 0.18) 0, rgba(23, 23, 23, 0.18) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.5;
+            z-index: -1;
+        }
+        html.dark body::before {
+            background-image: radial-gradient(circle at 12px 12px, rgba(204, 204, 204, 0.18) 0, rgba(204, 204, 204, 0.18) 1px, transparent 1px);
+            opacity: 0.32;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at top, rgba(23, 23, 23, 0.28), transparent 55%), radial-gradient(circle at bottom, rgba(99, 99, 99, 0.22), transparent 45%);
+            z-index: -1;
+        }
+        html.dark body::after {
+            background: radial-gradient(circle at top, rgba(0, 0, 0, 0.82), transparent 55%), radial-gradient(circle at bottom, rgba(136, 136, 136, 0.36), transparent 45%);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-cream-50 via-cream-200 to-sage-100 dark:from-black dark:via-sage-900 dark:to-sage-800 text-sage-800 dark:text-cream-100 font-sans transition-colors duration-500">
+
+{{template "nav" .}}
+
+<main class="container mx-auto px-4 md:px-8 py-10">
+    <header class="mb-10 text-center">
+        <p class="uppercase tracking-[0.3em] text-xs md:text-sm text-lavender-400 dark:text-lavender-200 mb-3">Victoria College C'29</p>
+        <h1 class="text-4xl md:text-5xl font-serif font-light bg-gradient-to-r from-sage-900 via-sage-600 to-sage-800 dark:from-cream-100 dark:via-cream-200 dark:to-cream-100 bg-clip-text text-transparent mb-4">Executive Coordination Hub</h1>
+        <p class="text-sage-600 dark:text-cream-300 max-w-2xl mx-auto">Align council leadership, track initiatives, and keep every action item accountable. You are signed in as <span class="font-semibold">{{if .CurrentUserName}}{{.CurrentUserName}}{{else}}Admin{{end}}</span>.</p>
+    </header>
+
+    <div class="grid gap-8 lg:grid-cols-2">
+        {{template "admin_chat_section" .}}
+        {{template "admin_tasks_section" .}}
+    </div>
+</main>
+
+<script>
+(function () {
+    if (!window.EventSource) {
+        return;
+    }
+
+    var evtSource = new EventSource('/admin/chat/events');
+    var closeStream = function () {
+        if (evtSource) {
+            evtSource.close();
+        }
+    };
+
+    window.addEventListener('beforeunload', closeStream);
+    window.addEventListener('pagehide', closeStream);
+
+    var reloadChat = function () {
+        if (window.htmx) {
+            window.htmx.ajax('GET', '/admin/hub/fragment/chat', { target: '#admin-chat-section', swap: 'outerHTML' });
+        }
+    };
+
+    var reloadTasks = function () {
+        if (window.htmx) {
+            var url = '/admin/hub/fragment/tasks' + window.location.search;
+            window.htmx.ajax('GET', url, { target: '#admin-tasks-section', swap: 'outerHTML' });
+        }
+    };
+
+    evtSource.addEventListener('chat', reloadChat);
+    evtSource.addEventListener('tasks', reloadTasks);
+    evtSource.addEventListener('heartbeat', function () {});
+})();
+
+document.addEventListener('htmx:afterSwap', function (evt) {
+    if (!evt.detail || !evt.detail.target) {
+        return;
+    }
+    if (evt.detail.target.id === 'admin-chat-section') {
+        var list = document.getElementById('chat-message-list');
+        if (list) {
+            list.scrollTop = list.scrollHeight;
+        }
+    }
+});
+
+window.addEventListener('load', function () {
+    var list = document.getElementById('chat-message-list');
+    if (list) {
+        list.scrollTop = list.scrollHeight;
+    }
+});
+</script>
+
+</body>
+</html>

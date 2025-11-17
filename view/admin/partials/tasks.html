@@ -1,0 +1,199 @@
+{{define "admin_tasks_section"}}
+<section id="admin-tasks-section" class="bg-cream-50/85 dark:bg-sage-900/75 backdrop-blur rounded-3xl border border-sage-100 dark:border-sage-700 shadow-xl p-6 md:p-8">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-serif text-sage-800 dark:text-cream-100">Initiative Tracker</h2>
+        <span class="text-xs uppercase tracking-widest text-sage-400 dark:text-cream-400">Tasks &amp; owners</span>
+    </div>
+
+    {{with .AdminHub.TaskSummary}}
+    <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-2xl bg-white/70 dark:bg-sage-800/70 border border-sage-200 dark:border-sage-700 p-4 shadow-sm">
+            <p class="text-xs uppercase tracking-wider text-sage-400 dark:text-cream-400">Active Tasks</p>
+            <p class="mt-2 text-3xl font-serif text-sage-800 dark:text-cream-100">{{.Total}}</p>
+        </div>
+        <div class="rounded-2xl bg-white/70 dark:bg-sage-800/70 border border-sage-200 dark:border-sage-700 p-4 shadow-sm">
+            <p class="text-xs uppercase tracking-wider text-sage-400 dark:text-cream-400">In Motion</p>
+            <p class="mt-2 text-3xl font-serif text-sage-800 dark:text-cream-100">{{.InProgress}}</p>
+        </div>
+        <div class="rounded-2xl bg-white/70 dark:bg-sage-800/70 border border-sage-200 dark:border-sage-700 p-4 shadow-sm">
+            <p class="text-xs uppercase tracking-wider text-sage-400 dark:text-cream-400">Blocked</p>
+            <p class="mt-2 text-3xl font-serif text-sage-800 dark:text-cream-100">{{.Blocked}}</p>
+        </div>
+        <div class="rounded-2xl bg-white/70 dark:bg-sage-800/70 border border-sage-200 dark:border-sage-700 p-4 shadow-sm">
+            <p class="text-xs uppercase tracking-wider text-sage-400 dark:text-cream-400">Urgent</p>
+            <p class="mt-2 text-3xl font-serif text-sage-800 dark:text-cream-100">{{.Urgent}}</p>
+        </div>
+    </div>
+    {{end}}
+
+    {{$filter := .AdminHub.TaskFilter}}
+    {{$hasFilter := or (ne $filter.Status "") (or (ne $filter.Priority "") (ne $filter.Query ""))}}
+    <form id="task-filter-form" method="GET" action="/admin/hub" class="mb-8 bg-white/70 dark:bg-sage-800/80 border border-sage-200 dark:border-sage-700 rounded-2xl p-5 shadow-md space-y-4" hx-get="/admin/hub/fragment/tasks" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="this" hx-push-url="true" hx-trigger="change delay:250ms, keyup changed delay:400ms from:#filter-query, submit">
+        <div class="grid gap-4 md:grid-cols-3">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="filter-status">Filter Status</label>
+                <select id="filter-status" name="status" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3">
+                    <option value="" {{if eq $filter.Status ""}}selected{{end}}>All statuses</option>
+                    {{range .AdminHub.TaskStatusOptions}}
+                    <option value="{{.Value}}" {{if eq .Value $filter.Status}}selected{{end}}>{{.Label}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="filter-priority">Filter Priority</label>
+                <select id="filter-priority" name="priority" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3">
+                    <option value="" {{if eq $filter.Priority ""}}selected{{end}}>All priorities</option>
+                    {{range .AdminHub.TaskPriorityOptions}}
+                    <option value="{{.Value}}" {{if eq .Value $filter.Priority}}selected{{end}}>{{.Label}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="md:col-span-3">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="filter-query">Search</label>
+                <input id="filter-query" name="q" type="search" value="{{$filter.Query}}" placeholder="Title, owner, or note" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3" />
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex gap-3">
+                <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white font-semibold text-sm shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105">Apply Filters</button>
+                {{if $hasFilter}}
+                <a href="/admin/hub" class="inline-flex items-center px-4 py-2 rounded-full border border-sage-200 dark:border-sage-700 text-sage-500 dark:text-cream-300 text-sm hover:bg-sage-100 dark:hover:bg-sage-800">Reset filters</a>
+                {{end}}
+            </div>
+            <span class="text-[11px] uppercase tracking-wider text-sage-400 dark:text-cream-400">{{len .AdminHub.Tasks}} visible</span>
+        </div>
+    </form>
+
+    <form method="POST" action="/admin/chat/tasks/" hx-post="/admin/chat/tasks/" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="#task-filter-form" hx-on::after-request="this.reset();" class="mb-8 bg-white/70 dark:bg-sage-800/80 border border-sage-200 dark:border-sage-700 rounded-2xl p-5 shadow-md space-y-4">
+        <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="task-title">Task Title</label>
+            <input id="task-title" name="title" type="text" maxlength="200" required class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sage-400 dark:focus:ring-sage-500" placeholder="Outline the action item" />
+        </div>
+        <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="task-description">Context</label>
+            <textarea id="task-description" name="description" rows="3" maxlength="4000" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sage-400 dark:focus:ring-sage-500" placeholder="Key notes, resources, or expectations"></textarea>
+        </div>
+        <div class="grid gap-4 md:grid-cols-3">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="task-priority">Priority</label>
+                <select id="task-priority" name="priority" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3">
+                    {{range .AdminHub.TaskPriorityOptions}}
+                    <option value="{{.Value}}" {{if eq .Value "medium"}}selected{{end}}>{{.Label}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="task-status">Status</label>
+                <select id="task-status" name="status" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3">
+                    {{range .AdminHub.TaskStatusOptions}}
+                    <option value="{{.Value}}" {{if eq .Value "todo"}}selected{{end}}>{{.Label}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="task-due">Due Date</label>
+                <input id="task-due" name="due_date" type="date" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3" />
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-400 mb-2" for="task-assigned">Assign Lead</label>
+            <select id="task-assigned" name="assigned_to" class="w-full rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-4 py-3">
+                <option value="">Unassigned</option>
+                {{range .AdminHub.AdminUsers}}
+                <option value="{{.ID}}">{{if .FullName}}{{.FullName}}{{else}}{{.Username}}{{end}}</option>
+                {{end}}
+            </select>
+        </div>
+        <div class="flex justify-end">
+            <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-lavender-400 to-sage-500 text-white font-semibold text-sm shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105">Create Task</button>
+        </div>
+    </form>
+
+    <div class="space-y-6">
+        {{range .AdminHub.Tasks}}
+        {{$task := .}}
+        <article class="rounded-3xl border border-sage-200 dark:border-sage-700 bg-white/70 dark:bg-sage-800/80 shadow-lg p-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-xl font-serif text-sage-800 dark:text-cream-100">{{.Title}}</h3>
+                    {{if .Description}}
+                    <p class="mt-2 text-sm text-sage-600 dark:text-cream-300 whitespace-pre-line">{{.Description}}</p>
+                    {{end}}
+                </div>
+                <form method="POST" action="/admin/chat/tasks/{{.ID}}/delete" hx-post="/admin/chat/tasks/{{.ID}}/delete" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="#task-filter-form" hx-confirm="Archive this task?">
+                    <button type="submit" class="text-xs uppercase tracking-wider text-red-500 dark:text-red-300 border border-red-300 dark:border-red-500 px-3 py-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/40">Archive</button>
+                </form>
+            </div>
+
+            <dl class="mt-4 grid gap-3 md:grid-cols-2 text-xs uppercase tracking-wider text-sage-500 dark:text-cream-400">
+                <div class="flex items-center gap-2"><span class="font-semibold">Status</span><span class="px-3 py-1 rounded-full bg-sage-100 dark:bg-sage-700/70 text-sage-700 dark:text-cream-200 text-[11px]">{{.StatusLabel}}</span></div>
+                <div class="flex items-center gap-2"><span class="font-semibold">Priority</span><span class="px-3 py-1 rounded-full bg-lavender-100 dark:bg-sage-700/70 text-sage-700 dark:text-cream-200 text-[11px]">{{.PriorityLabel}}</span></div>
+                <div><span class="font-semibold">Owner:</span> {{.AssignedToName}}</div>
+                <div><span class="font-semibold">Updated:</span> {{if .UpdatedAtHuman}}{{.UpdatedAtHuman}}{{else}}&mdash;{{end}}</div>
+                <div><span class="font-semibold">Created:</span> {{if .CreatedAtHuman}}{{.CreatedAtHuman}}{{else}}&mdash;{{end}}</div>
+                <div><span class="font-semibold">Due:</span> {{if .DueDateHuman}}{{.DueDateHuman}}{{if .IsOverdue}} <span class="text-red-500 dark:text-red-300">(Overdue)</span>{{end}}{{else}}Not set{{end}}</div>
+            </dl>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+                <form method="POST" action="/admin/chat/tasks/{{.ID}}/status" hx-post="/admin/chat/tasks/{{.ID}}/status" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="#task-filter-form" class="bg-cream-50/80 dark:bg-sage-900/60 border border-sage-200 dark:border-sage-700 rounded-2xl px-4 py-3">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-2" for="task-status-{{.ID}}">Update Status</label>
+                    <div class="flex gap-2">
+                        <select id="task-status-{{.ID}}" name="status" class="flex-1 rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-3 py-2">
+                            {{range $.AdminHub.TaskStatusOptions}}
+                            <option value="{{.Value}}" {{if eq .Value $task.Status}}selected{{end}}>{{.Label}}</option>
+                            {{end}}
+                        </select>
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-sage-700 text-white text-xs uppercase tracking-wider">Apply</button>
+                    </div>
+                </form>
+                <form method="POST" action="/admin/chat/tasks/{{.ID}}/assignment" hx-post="/admin/chat/tasks/{{.ID}}/assignment" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="#task-filter-form" class="bg-cream-50/80 dark:bg-sage-900/60 border border-sage-200 dark:border-sage-700 rounded-2xl px-4 py-3">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-2" for="task-assign-{{.ID}}">Assign Owner</label>
+                    <div class="flex gap-2">
+                        <select id="task-assign-{{.ID}}" name="assigned_to" class="flex-1 rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-3 py-2">
+                            <option value="">Unassigned</option>
+                            {{range $.AdminHub.AdminUsers}}
+                            <option value="{{.ID}}" {{if and $task.HasAssignee (eq .ID $task.AssignedToValue)}}selected{{end}}>{{if .FullName}}{{.FullName}}{{else}}{{.Username}}{{end}}</option>
+                            {{end}}
+                        </select>
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-sage-700 text-white text-xs uppercase tracking-wider">Save</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="mt-4">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-sm font-semibold uppercase tracking-wider text-sage-500 dark:text-cream-300">Progress Checklist</h4>
+                    <span class="text-xs text-sage-400 dark:text-cream-400">{{.CompletedTodos}} / {{len .Todos}} complete</span>
+                </div>
+                <ul class="mt-3 space-y-2">
+                    {{range .Todos}}
+                    <li class="flex items-start justify-between gap-3 bg-white/80 dark:bg-sage-900/50 border border-sage-100 dark:border-sage-700 rounded-xl px-3 py-2">
+                        <div>
+                            <p class="text-sm {{if .IsDone}}line-through text-sage-400 dark:text-sage-400{{else}}text-sage-700 dark:text-cream-200{{end}}">{{.Label}}</p>
+                            <span class="text-[11px] uppercase tracking-wider text-sage-300 dark:text-sage-500">{{if .CreatedAtHuman}}{{.CreatedAtHuman}}{{else}}&mdash;{{end}}</span>
+                        </div>
+                        <form method="POST" action="/admin/chat/todos/{{.ID}}/toggle" hx-post="/admin/chat/todos/{{.ID}}/toggle" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="#task-filter-form" class="self-center">
+                            <input type="hidden" name="is_done" value="{{if .IsDone}}0{{else}}1{{end}}" />
+                            <button type="submit" class="text-xs uppercase tracking-wider px-3 py-1.5 rounded-full border {{if .IsDone}}border-sage-400 dark:border-sage-500 text-sage-500 dark:text-sage-400 hover:bg-sage-100 dark:hover:bg-sage-800{{else}}border-sage-300 dark:border-sage-600 text-sage-600 dark:text-cream-200 hover:bg-sage-100 dark:hover:bg-sage-800{{end}}">{{if .IsDone}}Reopen{{else}}Complete{{end}}</button>
+                        </form>
+                    </li>
+                    {{else}}
+                    <li class="text-sm text-sage-500 dark:text-sage-300 italic">No checklist items yet.</li>
+                    {{end}}
+                </ul>
+                <form method="POST" action="/admin/chat/tasks/{{.ID}}/todos" hx-post="/admin/chat/tasks/{{.ID}}/todos" hx-target="#admin-tasks-section" hx-swap="outerHTML" hx-include="#task-filter-form" hx-on::after-request="this.reset();" class="mt-3 flex gap-2">
+                    <input name="label" type="text" maxlength="500" class="flex-1 rounded-xl border-2 border-sage-200 dark:border-sage-700 bg-white dark:bg-sage-900 text-sage-700 dark:text-cream-100 px-3 py-2" placeholder="Add a follow-up step" />
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-lavender-400 text-sage-900 font-semibold text-xs uppercase tracking-wider">Add</button>
+                </form>
+            </div>
+        </article>
+        {{else}}
+        {{if $hasFilter}}
+        <p class="text-sm text-sage-500 dark:text-sage-300 italic">No initiatives match the current filters.</p>
+        {{else}}
+        <p class="text-sm text-sage-500 dark:text-sage-300 italic">Start the first initiative to coordinate workstreams.</p>
+        {{end}}
+        {{end}}
+    </div>
+</section>
+{{end}}

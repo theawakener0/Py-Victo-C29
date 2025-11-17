@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Update - VC C'29 Student Union{% endblock %}
+
+{% block extra_head %}
+<style>
+    #posts-edit-hero {
+        position: relative;
+        overflow: hidden;
+    }
+    #posts-edit-hero::before,
+    #posts-edit-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    #posts-edit-hero::before {
+        background-image: url('{% static "VictoBackground.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        filter: blur(4px);
+        transform: scale(1.05);
+        -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0) 100%);
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0) 100%);
+        opacity: 0.9;
+    }
+    #posts-edit-hero::after {
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(17, 24, 39, 0.55) 55%, rgba(17, 24, 39, 0) 100%);
+    }
+    html.dark #posts-edit-hero::after {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.62) 55%, rgba(0, 0, 0, 0) 100%);
+    }
+    #posts-edit-hero .hero-inner {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="posts-edit-hero" class="relative min-h-[48vh] flex items-center justify-center text-center animate-fade-in">
+    <div class="hero-inner container mx-auto px-6 py-16">
+        <div class="max-w-3xl mx-auto space-y-6">
+            <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-cream-100/70">Council Dispatches</p>
+            <h1 class="text-5xl md:text-6xl font-serif font-light bg-gradient-to-r from-cream-100 via-cream-300 to-cream-100 text-transparent bg-clip-text">Revise a Bulletin</h1>
+            <p class="text-lg md:text-xl text-cream-200/90 font-light leading-relaxed">
+                Update the record to reflect the latest council decisions for Victoria College C'29.
+                <a href="{% url 'posts' %}" class="underline underline-offset-4 decoration-cream-200 hover:text-white transition-colors">Return to dispatches</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<div class="container mx-auto px-6 py-16">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-cream-50/80 dark:bg-sage-900/70 backdrop-blur-lg rounded-3xl p-10 shadow-2xl border border-sage-200 dark:border-sage-700 animate-slide-up">
+            <form method="post" novalidate class="space-y-8">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="rounded-2xl border border-red-300 dark:border-red-600 bg-red-50/80 dark:bg-red-900/40 text-red-700 dark:text-red-200 px-4 py-3">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="space-y-3">
+                    <label for="id_title" class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2M5 9h14l-1.232 9.863A2 2 0 0115.79 21H8.21a2 2 0 01-1.978-2.137L5 9z"></path>
+                        </svg>
+                        Headline
+                    </label>
+                    {{ form.title }}
+                    {{ form.title.errors }}
+                </div>
+
+                <div class="space-y-3">
+                    <label for="id_content" class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v12H4z"></path>
+                        </svg>
+                        Dispatch Notes
+                    </label>
+                    {{ form.content }}
+                    {{ form.content.errors }}
+                </div>
+
+                <div class="space-y-3">
+                    <label for="id_committee" class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7"></path>
+                        </svg>
+                        Committee (optional)
+                    </label>
+                    {{ form.committee }}
+                    {{ form.committee.errors }}
+                </div>
+
+                <div class="pt-6 border-t-2 border-dashed border-sage-200 dark:border-sage-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <a href="{% url 'posts' %}" class="inline-flex items-center text-sm text-sage-600 dark:text-sage-300 hover:text-sage-800 dark:hover:text-cream-200 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7"></path>
+                        </svg>
+                        Cancel &amp; return
+                    </a>
+                    <button type="submit" class="group inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-serif font-semibold shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-500">
+                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Save Changes
+                        <svg class="w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-center text-sm text-sage-500 dark:text-sage-400 italic">
+                    Keep the record accurate for every cohort member.
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+<button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 transform hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group" aria-label="Toggle theme">
+    <svg class="w-6 h-6 block dark:hidden group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+    </svg>
+    <svg class="w-6 h-6 hidden dark:block group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+    </svg>
+</button>
+<script>
+    function toggleTheme() {
+        var html = document.documentElement;
+        var isDark = html.classList.contains('dark');
+        if (isDark) {
+            html.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            html.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+</script>
+{% endblock %}
