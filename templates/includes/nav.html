@@ -130,73 +130,75 @@
             </div>
         </div>
     </div>
-    <div id="mobile-nav-panel" class="mobile-nav-panel" aria-hidden="true" data-open="false">
-        <div class="mobile-nav-sheet">
-            <div class="flex items-center justify-between">
-                <p class="text-sm uppercase tracking-[0.35em]">Menu</p>
-                <button type="button" class="inline-flex items-center justify-center rounded-full border border-sage-200 dark:border-sage-700 p-2" data-nav-close aria-label="Close navigation">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <div class="mobile-nav-actions">
-                <a href="{% url 'home' %}" class="mobile-nav-link">
-                    Home
-                    <span>&#10132;</span>
-                </a>
-                <a href="{% url 'posts' %}" class="mobile-nav-link">Union Updates</a>
-                <a href="{% url 'videos' %}" class="mobile-nav-link">Media Library</a>
-                <a href="{% url 'legacy' %}" class="mobile-nav-link">Legacy</a>
-                {% if is_auth and committees %}
-                <details class="mobile-nav-accordion">
-                    <summary>
-                        Committees
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </summary>
-                    <div class="mb-2">
-                        {% for item in committees %}
-                        <a href="{% url 'committee' item.key %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">
-                            <p class="text-sm font-semibold">{{ item.name }}</p>
-                            <p class="text-xs text-sage-500 dark:text-sage-400">{{ item.summary }}</p>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </details>
-                {% endif %}
-                {% if is_admin %}
-                <details class="mobile-nav-accordion">
-                    <summary>
-                        Admin Console
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </summary>
-                    <div class="mb-2">
-                        <a href="{% url 'admin_hub' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Executive Hub</a>
-                        <a href="{% url 'post_create' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Publish Update</a>
-                        <a href="{% url 'video_create' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Submit Media</a>
-                    </div>
-                </details>
-                {% endif %}
-                {% if is_auth %}
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white px-4 py-2.5 font-semibold shadow">
-                        Logout
-                    </button>
-                </form>
-                {% else %}
-                <a href="{% url 'login' %}" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white px-4 py-2.5 font-semibold shadow">
-                    Sign In
-                </a>
-                {% endif %}
-            </div>
-        </div>
     </div>
 </nav>
+
+<div id="mobile-nav-panel" class="mobile-nav-panel" aria-hidden="true" data-open="false">
+    <div class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <div class="flex items-center justify-between sticky top-0 pb-4 mb-4 border-b border-sage-200/60 dark:border-sage-700/60 bg-inherit">
+            <p class="text-sm uppercase tracking-[0.35em]">Menu</p>
+            <button type="button" class="inline-flex items-center justify-center rounded-full border border-sage-200 dark:border-sage-700 p-2" data-nav-close aria-label="Close navigation">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-actions">
+            <a href="{% url 'home' %}" class="mobile-nav-link">
+                Home
+                <span>&#10132;</span>
+            </a>
+            <a href="{% url 'posts' %}" class="mobile-nav-link">Union Updates</a>
+            <a href="{% url 'videos' %}" class="mobile-nav-link">Media Library</a>
+            <a href="{% url 'legacy' %}" class="mobile-nav-link">Legacy</a>
+            {% if is_auth and committees %}
+            <details class="mobile-nav-accordion">
+                <summary>
+                    Committees
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </summary>
+                <div class="mb-2">
+                    {% for item in committees %}
+                    <a href="{% url 'committee' item.key %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">
+                        <p class="text-sm font-semibold">{{ item.name }}</p>
+                        <p class="text-xs text-sage-500 dark:text-sage-400">{{ item.summary }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+            </details>
+            {% endif %}
+            {% if is_admin %}
+            <details class="mobile-nav-accordion">
+                <summary>
+                    Admin Console
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </summary>
+                <div class="mb-2">
+                    <a href="{% url 'admin_hub' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Executive Hub</a>
+                    <a href="{% url 'post_create' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Publish Update</a>
+                    <a href="{% url 'video_create' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Submit Media</a>
+                </div>
+            </details>
+            {% endif %}
+            {% if is_auth %}
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white px-4 py-2.5 font-semibold shadow">
+                    Logout
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white px-4 py-2.5 font-semibold shadow">
+                Sign In
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 <script>
 (function () {
@@ -233,4 +235,3 @@
     });
 })();
 </script>
-</nav>
