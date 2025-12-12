@@ -28,9 +28,6 @@
         opacity: 0.9;
     }
     #admin-hub-hero::after {
-        background: linear-gradient(180deg, rgba(17, 24, 39, 0.9) 0%, rgba(17, 24, 39, 0.6) 55%, rgba(17, 24, 39, 0) 100%);
-    }
-    html.dark #admin-hub-hero::after {
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.94) 0%, rgba(0, 0, 0, 0.65) 55%, rgba(0, 0, 0, 0) 100%);
     }
     #admin-hub-hero .hero-inner {
@@ -53,25 +50,25 @@
 
 <div id="admin-hub-root" class="container mx-auto px-6 py-12" data-sse-url="{% url 'admin_chat_events' %}">
     <div class="stat-grid mb-10 lg:grid-cols-4">
-        <div class="rounded-3xl bg-cream-50/85 dark:bg-sage-900/80 border border-sage-200 dark:border-sage-700 p-6 shadow-lg">
-            <p class="text-sm uppercase tracking-[0.3em] text-sage-500 dark:text-sage-300 mb-2">Total Tasks</p>
-            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.total }}</p>
-            <p class="text-sage-500 dark:text-sage-300 text-sm mt-1">Across every committee queue.</p>
+        <div class="rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 p-6 shadow-lg">
+            <p class="text-sm uppercase tracking-[0.3em] text-cream-300/70 mb-2">Total Tasks</p>
+            <p class="text-4xl font-serif font-semibold text-cream-100">{{ admin_hub.task_summary.total }}</p>
+            <p class="text-cream-300/60 text-sm mt-1">Across every committee queue.</p>
         </div>
-        <div class="rounded-3xl bg-cream-50/85 dark:bg-sage-900/80 border border-sage-200 dark:border-sage-700 p-6 shadow-lg">
-            <p class="text-sm uppercase tracking-[0.3em] text-sage-500 dark:text-sage-300 mb-2">Urgent + High</p>
-            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.urgent|add:admin_hub.task_summary.high }}</p>
-            <p class="text-sage-500 dark:text-sage-300 text-sm mt-1">Items needing immediate attention.</p>
+        <div class="rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 p-6 shadow-lg">
+            <p class="text-sm uppercase tracking-[0.3em] text-cream-300/70 mb-2">Urgent + High</p>
+            <p class="text-4xl font-serif font-semibold text-cream-100">{{ admin_hub.task_summary.urgent|add:admin_hub.task_summary.high }}</p>
+            <p class="text-cream-300/60 text-sm mt-1">Items needing immediate attention.</p>
         </div>
-        <div class="rounded-3xl bg-cream-50/85 dark:bg-sage-900/80 border border-sage-200 dark:border-sage-700 p-6 shadow-lg">
-            <p class="text-sm uppercase tracking-[0.3em] text-sage-500 dark:text-sage-300 mb-2">Completed</p>
-            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.done }}</p>
-            <p class="text-sage-500 dark:text-sage-300 text-sm mt-1">Logged victories this term.</p>
+        <div class="rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 p-6 shadow-lg">
+            <p class="text-sm uppercase tracking-[0.3em] text-cream-300/70 mb-2">Completed</p>
+            <p class="text-4xl font-serif font-semibold text-cream-100">{{ admin_hub.task_summary.done }}</p>
+            <p class="text-cream-300/60 text-sm mt-1">Logged victories this term.</p>
         </div>
-        <div class="rounded-3xl bg-gradient-to-r from-lavender-200/80 to-cream-100/80 dark:from-sage-800 dark:to-sage-900 border border-sage-200/60 dark:border-sage-700 p-6 shadow-xl">
-            <p class="text-sm uppercase tracking-[0.3em] text-sage-700 dark:text-cream-200 mb-2">Blocked</p>
-            <p class="text-4xl font-serif font-semibold">{{ admin_hub.task_summary.blocked }}</p>
-            <p class="text-sage-700/80 dark:text-cream-300 text-sm mt-1">Escalate or nudge owners today.</p>
+        <div class="rounded-3xl bg-gradient-to-r from-lavender-600/30 to-lavender-500/20 backdrop-blur-xl border border-lavender-400/20 p-6 shadow-xl">
+            <p class="text-sm uppercase tracking-[0.3em] text-cream-200 mb-2">Blocked</p>
+            <p class="text-4xl font-serif font-semibold text-cream-100">{{ admin_hub.task_summary.blocked }}</p>
+            <p class="text-cream-300/80 text-sm mt-1">Escalate or nudge owners today.</p>
         </div>
     </div>
 
@@ -80,7 +77,7 @@
             {% include "admin/hub/partials/tasks.html" %}
         </div>
         <div class="space-y-6">
-            <section class="rounded-3xl bg-sage-900 text-cream-100 border border-sage-700 shadow-xl p-6">
+            <section class="rounded-3xl bg-black/70 backdrop-blur-xl text-cream-100 border border-white/10 shadow-xl p-6">
                 <div class="flex items-start justify-between gap-4 mb-4">
                     <div>
                         <p class="uppercase tracking-[0.35em] text-xs text-cream-200/70">Runway</p>
@@ -88,7 +85,7 @@
                         <p class="text-sm text-cream-200/80">Stay ahead with quick metrics and shortcuts.</p>
                     </div>
                     <span class="inline-flex items-center gap-1 rounded-full bg-cream-100/10 px-3 py-1 text-xs font-semibold">
-                        <span class="h-2 w-2 rounded-full bg-lavender-300 animate-pulse"></span>
+                        <span class="h-2 w-2 rounded-full bg-lavender-400 animate-pulse"></span>
                         Live
                     </span>
                 </div>
@@ -141,27 +138,27 @@
                 </div>
             </section>
 
-            <section class="rounded-3xl bg-cream-50/95 dark:bg-sage-900/85 border border-sage-200 dark:border-sage-700 shadow-lg p-6">
+            <section class="rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="uppercase tracking-[0.35em] text-xs text-sage-500 dark:text-sage-400">Deadlines</p>
-                        <h2 class="text-xl font-serif font-semibold">Upcoming Focus</h2>
+                        <p class="uppercase tracking-[0.35em] text-xs text-cream-300/70">Deadlines</p>
+                        <h2 class="text-xl font-serif font-semibold text-cream-100">Upcoming Focus</h2>
                     </div>
-                    <span class="text-xs text-sage-500 dark:text-sage-400">Next three</span>
+                    <span class="text-xs text-cream-300/60">Next three</span>
                 </div>
                 <div class="space-y-4">
                     {% with upcoming=admin_hub.tasks|slice:":3" %}
                     {% for task in upcoming %}
-                    <article class="rounded-2xl border border-sage-200/70 dark:border-sage-700/70 bg-white/90 dark:bg-sage-950/70 p-4">
+                    <article class="rounded-2xl border border-white/10 bg-black/50 p-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs uppercase tracking-wide text-sage-500 dark:text-sage-400">{{ task.priority_label }}</span>
-                            <span class="text-xs text-sage-500 dark:text-sage-400">{{ task.due_date_human|default:"No date" }}</span>
+                            <span class="text-xs uppercase tracking-wide text-cream-300/70">{{ task.priority_label }}</span>
+                            <span class="text-xs text-cream-300/60">{{ task.due_date_human|default:"No date" }}</span>
                         </div>
-                        <p class="mt-1 text-sm font-semibold text-sage-800 dark:text-cream-100">{{ task.title }}</p>
-                        <p class="text-xs text-sage-500 dark:text-sage-400">{{ task.assigned_to_name }}</p>
+                        <p class="mt-1 text-sm font-semibold text-cream-100">{{ task.title }}</p>
+                        <p class="text-xs text-cream-300/60">{{ task.assigned_to_name }}</p>
                     </article>
                     {% empty %}
-                    <p class="text-sm text-sage-600 dark:text-sage-300">No tasks logged yet.</p>
+                    <p class="text-sm text-cream-300/70">No tasks logged yet.</p>
                     {% endfor %}
                     {% endwith %}
                 </div>

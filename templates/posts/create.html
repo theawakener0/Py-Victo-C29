@@ -25,127 +25,249 @@
         transform: scale(1.05);
         -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0) 100%);
         mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0) 100%);
-        opacity: 0.9;
+        opacity: 0.7;
     }
     #posts-submit-hero::after {
-        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(17, 24, 39, 0.55) 55%, rgba(17, 24, 39, 0) 100%);
-    }
-    html.dark #posts-submit-hero::after {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.62) 55%, rgba(0, 0, 0, 0) 100%);
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.65) 55%, rgba(0, 0, 0, 0) 100%);
     }
     #posts-submit-hero .hero-inner {
         position: relative;
         z-index: 1;
     }
+    
+    /* Editor tabs */
+    .editor-tab {
+        transition: all 0.2s ease;
+    }
+    .editor-tab.active {
+        background: linear-gradient(135deg, #4a4a5a 0%, #2a2a3a 100%);
+        color: white;
+        border-color: transparent;
+    }
+    
+    /* Content Editor Override - Black background with soft text */
+    #id_content {
+        background: #000000 !important;
+        color: #e4e4e7 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+        font-size: 0.9rem;
+        line-height: 1.8;
+        min-height: 28rem;
+        resize: vertical;
+    }
+    #id_content:focus {
+        border-color: rgba(139, 139, 154, 0.5) !important;
+        box-shadow: 0 0 0 3px rgba(139, 139, 154, 0.1), inset 0 0 80px rgba(255, 255, 255, 0.01);
+        outline: none;
+    }
+    #id_content::placeholder {
+        color: #52525b;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<section id="posts-submit-hero" class="relative min-h-[48vh] flex items-center justify-center text-center animate-fade-in">
+<section id="posts-submit-hero" class="relative min-h-[40vh] flex items-center justify-center text-center animate-fade-in">
     <div class="hero-inner container mx-auto px-6 py-16">
         <div class="max-w-3xl mx-auto space-y-6">
-            <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-cream-100/70">Council Dispatches</p>
-            <h1 class="text-5xl md:text-6xl font-serif font-light bg-gradient-to-r from-cream-100 via-cream-300 to-cream-100 text-transparent bg-clip-text">Publish a Bulletin</h1>
-            <p class="text-lg md:text-xl text-cream-200/90 font-light leading-relaxed">
+            <p class="uppercase tracking-[0.35em] text-xs md:text-sm text-cream-400">Council Dispatches</p>
+            <h1 class="text-5xl md:text-6xl font-serif font-light bg-gradient-to-r from-cream-100 via-cream-200 to-cream-100 text-transparent bg-clip-text">Publish a Bulletin</h1>
+            <p class="text-lg md:text-xl text-cream-300 font-light leading-relaxed">
                 Share the latest minutes, statements, and campaign chronicles with Victoria College C'29.
-                <a href="{% url 'posts' %}" class="underline underline-offset-4 decoration-cream-200 hover:text-white transition-colors">Return to dispatches</a>
+                <a href="{% url 'posts' %}" class="underline underline-offset-4 decoration-cream-400 hover:text-white transition-colors">Return to dispatches</a>
             </p>
         </div>
     </div>
 </section>
 
 <div class="container mx-auto px-6 py-16">
-    <div class="max-w-3xl mx-auto">
-        <div class="bg-cream-50/80 dark:bg-sage-900/70 backdrop-blur-lg rounded-3xl p-10 shadow-2xl border border-sage-200 dark:border-sage-700 animate-slide-up">
-            <form method="post" novalidate class="space-y-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-black/60 backdrop-blur-xl rounded-2xl p-8 md:p-10 shadow-2xl border border-white/10 animate-slide-up">
+            <form method="post" 
+                  hx-post="{% url 'post_create' %}"
+                  hx-target="body"
+                  novalidate 
+                  class="space-y-6">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
-                <div class="rounded-2xl border border-red-300 dark:border-red-600 bg-red-50/80 dark:bg-red-900/40 text-red-700 dark:text-red-200 px-4 py-3">
+                <div class="rounded-xl border border-red-500/30 bg-red-900/30 text-red-200 px-4 py-3">
                     {{ form.non_field_errors }}
                 </div>
                 {% endif %}
 
-                <div class="space-y-3">
-                    <label for="id_title" class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-200">
-                        <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2M5 9h14l-1.232 9.863A2 2 0 0115.79 21H8.21a2 2 0 01-1.978-2.137L5 9z"></path>
+                <!-- Title -->
+                <div class="space-y-2">
+                    <label for="id_title" class="flex items-center text-sm font-semibold text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"></path>
                         </svg>
-                        Headline
+                        Title
                     </label>
                     {{ form.title }}
-                    {{ form.title.errors }}
+                    {% if form.title.errors %}<p class="text-red-400 text-sm mt-1">{{ form.title.errors.0 }}</p>{% endif %}
                 </div>
 
-                <div class="space-y-3">
-                    <label for="id_content" class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-200">
-                        <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v12H4z"></path>
+                <!-- Thumbnail URL -->
+                <div class="space-y-2">
+                    <label for="id_thumbnail" class="flex items-center text-sm font-semibold text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
-                        Dispatch Notes
+                        Thumbnail Image URL (optional)
                     </label>
-                    {{ form.content }}
-                    {{ form.content.errors }}
+                    {{ form.thumbnail }}
+                    {% if form.thumbnail.errors %}<p class="text-red-400 text-sm mt-1">{{ form.thumbnail.errors.0 }}</p>{% endif %}
                 </div>
 
-                <div class="space-y-3">
-                    <label for="id_committee" class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-200">
-                        <svg class="w-5 h-5 mr-2 text-sage-600 dark:text-cream-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7"></path>
+                <!-- Excerpt -->
+                <div class="space-y-2">
+                    <label for="id_excerpt" class="flex items-center text-sm font-semibold text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Preview Text (auto-generated if empty)
+                    </label>
+                    {{ form.excerpt }}
+                    {% if form.excerpt.errors %}<p class="text-red-400 text-sm mt-1">{{ form.excerpt.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Content Editor with Tabs -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <label class="flex items-center text-sm font-semibold text-cream-200">
+                            <svg class="w-5 h-5 mr-2 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Content (Markdown/HTML)
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <!-- Editor/Preview Tabs -->
+                            <button type="button" 
+                                    onclick="showEditor()" 
+                                    id="tab-editor"
+                                    class="editor-tab active px-3 py-1.5 text-xs font-medium rounded-full border border-white/10 text-cream-200">
+                                Write
+                            </button>
+                            <button type="button" 
+                                    onclick="showPreview()" 
+                                    id="tab-preview"
+                                    class="editor-tab px-3 py-1.5 text-xs font-medium rounded-full border border-white/10 text-cream-200 hover:bg-white/5 transition-colors">
+                                Preview
+                            </button>
+                            <!-- Help Button -->
+                            <button type="button" 
+                                    hx-get="{% url 'post_editor_help' %}"
+                                    hx-target="#help-dialog-content"
+                                    hx-swap="innerHTML"
+                                    onclick="document.getElementById('help-dialog').showModal()"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-white/5 border border-white/10 text-cream-300 hover:bg-white/10 transition-colors">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Help
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Editor Area -->
+                    <div id="editor-container">
+                        {{ form.content }}
+                        {% if form.content.errors %}<p class="text-red-400 text-sm mt-1">{{ form.content.errors.0 }}</p>{% endif %}
+                    </div>
+                    
+                    <!-- Preview Area (hidden by default) -->
+                    <div id="preview-container" 
+                         class="hidden min-h-[24rem] rounded-xl border border-white/10 bg-black/80 p-6 overflow-auto">
+                        <div id="preview-content" class="post-content prose prose-invert max-w-none">
+                            <p class="text-cream-400 italic">Click "Preview" to see rendered content...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Committee -->
+                <div class="space-y-2">
+                    <label for="id_committee" class="flex items-center text-sm font-semibold text-cream-200">
+                        <svg class="w-5 h-5 mr-2 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         Committee (optional)
                     </label>
                     {{ form.committee }}
-                    {{ form.committee.errors }}
+                    {% if form.committee.errors %}<p class="text-red-400 text-sm mt-1">{{ form.committee.errors.0 }}</p>{% endif %}
                 </div>
 
-                <div class="pt-6 border-t-2 border-dashed border-sage-200 dark:border-sage-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <a href="{% url 'posts' %}" class="inline-flex items-center text-sm text-sage-600 dark:text-sage-300 hover:text-sage-800 dark:hover:text-cream-200 transition-colors">
+                <!-- Actions -->
+                <div class="pt-6 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <a href="{% url 'posts' %}" class="inline-flex items-center text-sm text-cream-400 hover:text-cream-200 transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7"></path>
                         </svg>
                         Cancel &amp; return
                     </a>
-                    <button type="submit" class="group inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-serif font-semibold shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-500">
+                    <button type="submit" class="group inline-flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 text-white font-serif font-semibold shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
                         <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                         Publish Bulletin
-                        <svg class="w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
                     </button>
                 </div>
 
-                <p class="text-center text-sm text-sage-500 dark:text-sage-400 italic">
-                    Every bulletin keeps the cohort informed and united.
+                <p class="text-center text-sm text-cream-500 italic">
+                    Images and videos in your post will automatically appear in the Media Gallery!
                 </p>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Help Dialog -->
+<dialog id="help-dialog" class="bg-transparent p-0 max-w-2xl w-full backdrop:bg-black/70">
+    <div class="bg-black/95 border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl max-h-[80vh] overflow-auto">
+        <div class="flex items-center justify-between mb-4">
+            <span></span>
+            <button type="button" 
+                    onclick="document.getElementById('help-dialog').close()"
+                    class="p-2 text-cream-400 hover:text-cream-200 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="help-dialog-content" class="text-cream-200">
+            <p class="text-cream-400 text-center">Loading...</p>
+        </div>
+    </div>
+</dialog>
 {% endblock %}
 
 {% block extra_body %}
-<button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 transform hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group" aria-label="Toggle theme">
-    <svg class="w-6 h-6 block dark:hidden group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-    </svg>
-    <svg class="w-6 h-6 hidden dark:block group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-    </svg>
-</button>
 <script>
-    function toggleTheme() {
-        var html = document.documentElement;
-        var isDark = html.classList.contains('dark');
-        if (isDark) {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        } else {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
+    function showEditor() {
+        document.getElementById('editor-container').classList.remove('hidden');
+        document.getElementById('preview-container').classList.add('hidden');
+        document.getElementById('tab-editor').classList.add('active');
+        document.getElementById('tab-preview').classList.remove('active');
+    }
+    
+    function showPreview() {
+        document.getElementById('editor-container').classList.add('hidden');
+        document.getElementById('preview-container').classList.remove('hidden');
+        document.getElementById('tab-editor').classList.remove('active');
+        document.getElementById('tab-preview').classList.add('active');
+        
+        // Fetch preview via htmx
+        var content = document.getElementById('id_content').value;
+        htmx.ajax('POST', '{% url "post_preview" %}', {
+            target: '#preview-content',
+            swap: 'innerHTML',
+            values: { content: content }
+        });
     }
 </script>
 {% endblock %}

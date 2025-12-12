@@ -3,38 +3,38 @@
     data-indicator="#admin-hub-chat-indicator"
     class="flex flex-col h-full">
 
-    <div class="bg-cream-50/90 dark:bg-sage-900/90 border border-sage-200 dark:border-sage-800 rounded-3xl shadow-2xl p-6 flex flex-col h-full">
+    <div class="bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 flex flex-col h-full">
         <div class="flex items-center justify-between mb-4 gap-4 flex-wrap">
             <div>
-                <p class="uppercase tracking-[0.35em] text-xs text-sage-500 dark:text-sage-400">Rapid Comms</p>
-                <h2 class="text-2xl font-serif font-semibold">Executive Chat</h2>
-                <p class="text-xs text-sage-500 dark:text-sage-400 mt-1">Live push refresh when dispatches change.</p>
+                <p class="uppercase tracking-[0.35em] text-xs text-cream-300/70">Rapid Comms</p>
+                <h2 class="text-2xl font-serif font-semibold text-cream-100">Executive Chat</h2>
+                <p class="text-xs text-cream-300/60 mt-1">Live push refresh when dispatches change.</p>
             </div>
-            <div class="flex items-center gap-3 text-xs text-sage-500 dark:text-sage-400">
+            <div class="flex items-center gap-3 text-xs text-cream-300/60">
                 <span class="hidden htmx-indicator" id="admin-hub-chat-indicator">Updating…</span>
-                <button type="button" data-refresh-target="admin-hub-chat" class="inline-flex items-center gap-2 rounded-full border border-sage-200 dark:border-sage-700 px-4 py-1.5 text-xs font-semibold text-sage-700 dark:text-cream-100 hover:bg-sage-100/60 dark:hover:bg-sage-800/40 transition">Refresh now</button>
+                <button type="button" data-refresh-target="admin-hub-chat" class="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 text-xs font-semibold text-cream-100 hover:bg-white/5 transition">Refresh now</button>
             </div>
         </div>
 
         <div class="flex-1 overflow-y-auto space-y-4 pr-1" style="max-height: 28rem;">
             {% for message in admin_hub.messages %}
-            <article class="rounded-2xl p-4 border {{ message.is_mine|yesno:'border-sage-300 dark:border-sage-600 bg-sage-100/80 dark:bg-sage-800/50,border-cream-200 dark:border-sage-700 bg-white/80 dark:bg-sage-900/60' }} shadow-inner">
+            <article class="rounded-2xl p-4 border {{ message.is_mine|yesno:'border-lavender-500/30 bg-lavender-900/20,border-white/10 bg-black/40' }} shadow-inner">
                 <div class="flex items-center justify-between mb-2">
                     <div>
-                        <p class="text-sm font-semibold text-sage-700 dark:text-cream-100">{{ message.author_name }}</p>
-                        <p class="text-xs text-sage-500 dark:text-sage-400">{{ message.created_at_human }}</p>
+                        <p class="text-sm font-semibold text-cream-100">{{ message.author_name }}</p>
+                        <p class="text-xs text-cream-300/60">{{ message.created_at_human }}</p>
                     </div>
                     {% if message.is_mine and message.id %}
                     <form method="post" action="{% url 'chat_message_delete' message.id %}" hx-post="{% url 'chat_message_delete' message.id %}" hx-target="#admin-hub-chat" hx-swap="outerHTML" hx-indicator="#admin-hub-chat-indicator">
                         {% csrf_token %}
-                        <button type="submit" class="text-xs text-red-600 dark:text-red-400 hover:underline">Delete</button>
+                        <button type="submit" class="text-xs text-red-400 hover:underline">Delete</button>
                     </form>
                     {% endif %}
                 </div>
-                <p class="text-sm text-sage-800 dark:text-cream-200 whitespace-pre-line">{{ message.body }}</p>
+                <p class="text-sm text-cream-200 whitespace-pre-line">{{ message.body }}</p>
             </article>
             {% empty %}
-            <div class="text-center text-sage-600 dark:text-sage-300 py-12">
+            <div class="text-center text-cream-300/70 py-12">
                 No messages yet. Start the first dispatch below.
             </div>
             {% endfor %}
@@ -42,10 +42,10 @@
 
         <form method="post" action="{% url 'chat_message_create' %}" hx-post="{% url 'chat_message_create' %}" hx-target="#admin-hub-chat" hx-swap="outerHTML" hx-indicator="#admin-hub-chat-indicator" class="mt-6 space-y-3">
             {% csrf_token %}
-            <textarea name="body" rows="3" maxlength="4000" placeholder="Log a new update, request, or reminder" class="w-full rounded-2xl border border-sage-200 dark:border-sage-700 bg-white/90 dark:bg-sage-950/70 text-sage-900 dark:text-cream-100 px-4 py-3 focus:ring-2 focus:ring-sage-500 focus:outline-none" required></textarea>
+            <textarea name="body" rows="3" maxlength="4000" placeholder="Log a new update, request, or reminder" class="w-full rounded-2xl border border-white/10 bg-black/70 text-cream-100 placeholder-cream-400/50 px-4 py-3 focus:ring-2 focus:ring-lavender-500 focus:outline-none"></textarea>
             <div class="flex items-center justify-between">
-                <small class="text-xs text-sage-500 dark:text-sage-400">Markdown not supported. Keep it concise.</small>
-                <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                <small class="text-xs text-cream-300/60">Markdown not supported. Keep it concise.</small>
+                <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-lavender-600 to-lavender-700 hover:from-lavender-500 hover:to-lavender-600 text-white text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
                     Send Update
                 </button>
             </div>

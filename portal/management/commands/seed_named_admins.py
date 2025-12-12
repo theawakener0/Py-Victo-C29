@@ -14,6 +14,7 @@ class AccountSpec:
     username: str
     full_name: str
     email: str
+    admin_role: str = "none"  # matches AccountUser.AdminRole values
 
 
 def _random_password(length: int = 16) -> str:
@@ -25,25 +26,25 @@ def _iter_account_specs(domain: str) -> Iterable[AccountSpec]:
     def make_email(username: str) -> str:
         return f"{username}@{domain}".lower()
 
-    yield AccountSpec("union_president", "Union President", make_email("union_president"))
-    yield AccountSpec("union_vice_president", "Union Vice President", make_email("union_vice_president"))
+    yield AccountSpec("union_president", "Union President", make_email("union_president"), "union_president")
+    yield AccountSpec("union_vice_president", "Union Vice President", make_email("union_vice_president"), "union_vice_president")
 
     for committee in iter_committees():
         username = f"{committee.key}_lead"
         full_name = f"{committee.name} Lead"
-        yield AccountSpec(username, full_name, make_email(username))
+        yield AccountSpec(username, full_name, make_email(username), "committee_lead")
 
     for idx in range(1, 3):
         username = f"operations_admin_{idx:02d}"
         full_name = f"Operations Center Admin {idx:02d}"
-        yield AccountSpec(username, full_name, make_email(username))
+        yield AccountSpec(username, full_name, make_email(username), "operations_admin")
 
     for idx in range(1, 3):
         username = f"media_admin_{idx:02d}"
         full_name = f"Media Admin {idx:02d}"
-        yield AccountSpec(username, full_name, make_email(username))
+        yield AccountSpec(username, full_name, make_email(username), "media_admin")
 
-    yield AccountSpec("dev_admin", "Development Admin", make_email("dev_admin"))
+    yield AccountSpec("dev_admin", "Development Admin", make_email("dev_admin"), "dev_admin")
 
 
 class Command(BaseCommand):
@@ -100,7 +101,8 @@ class Command(BaseCommand):
                 )
                 user.is_staff = True
                 user.is_superuser = True
-                user.save(update_fields=["is_staff", "is_superuser"])
+                user.admin_role = spec.admin_role
+                user.save(update_fields=["is_staff", "is_superuser", "admin_role"])
                 created.append(spec.username)
                 if password_override:
                     credentials_output.append(f"  - {spec.username} / (provided password)")
@@ -126,6 +128,10 @@ class Command(BaseCommand):
             if not user.is_superuser:
                 user.is_superuser = True
                 fields_to_update.append("is_superuser")
+                changed = True
+            if user.admin_role != spec.admin_role:
+                user.admin_role = spec.admin_role
+                fields_to_update.append("admin_role")
                 changed = True
 
             if password_override:

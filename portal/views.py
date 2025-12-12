@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import queue
+import re
 import time
 from functools import wraps
 from typing import Callable
@@ -20,11 +21,12 @@ from .forms import (
     ChatTaskStatusForm,
     ChatTaskTodoForm,
     LoginForm,
+    MediaFilterForm,
     PostForm,
     SignupForm,
     VideoForm,
 )
-from .models import AccountUser, ChatMessage, ChatTask, ChatTaskItem, Post, Video
+from .models import AccountUser, ChatMessage, ChatTask, ChatTaskItem, Media, Post, Video
 from .services import (
     MAX_CHAT_MESSAGE_LENGTH,
     MAX_TASK_DESCRIPTION_LENGTH,
@@ -34,6 +36,7 @@ from .services import (
     TASK_STATUS_OPTIONS,
     TaskFilter,
     ensure_system_chat_message,
+    extract_media_from_content,
     messages_for_admin,
     posts_by_committee,
     sanitize_task_filter,
@@ -53,6 +56,28 @@ def is_htmx(request: HttpRequest) -> bool:
 def admin_required(view_func: Callable) -> Callable:
     @login_required
     @user_passes_test(lambda u: u.is_staff, login_url="login")
+    @wraps(view_func)
+    def wrapper(request: HttpRequest, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+def task_publisher_required(view_func: Callable) -> Callable:
+    """Decorator for views that require task publishing permission (union_president, union_vice_president)"""
+    @login_required
+    @user_passes_test(lambda u: u.is_staff and u.can_publish_tasks, login_url="login")
+    @wraps(view_func)
+    def wrapper(request: HttpRequest, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+def media_publisher_required(view_func: Callable) -> Callable:
+    """Decorator for views that require media publishing permission (media_admin_01, media_admin_02)"""
+    @login_required
+    @user_passes_test(lambda u: u.is_staff and u.can_publish_media, login_url="login")
     @wraps(view_func)
     def wrapper(request: HttpRequest, *args, **kwargs):
         return view_func(request, *args, **kwargs)
@@ -89,11 +114,15 @@ def build_admin_hub_data(request: HttpRequest, filter_: TaskFilter, system_messa
 
 
 def base_context(request: HttpRequest) -> dict:
+    user = request.user
+    is_auth = user.is_authenticated
     return {
-        "is_auth": request.user.is_authenticated,
-        "is_admin": request.user.is_staff,
-        "current_user_id": request.user.id if request.user.is_authenticated else 0,
-        "current_user_name": request.user.get_username() if request.user.is_authenticated else "",
+        "is_auth": is_auth,
+        "is_admin": user.is_staff if is_auth else False,
+        "can_publish_tasks": user.can_publish_tasks if is_auth else False,
+        "can_publish_media": user.can_publish_media if is_auth else False,
+        "current_user_id": user.id if is_auth else 0,
+        "current_user_name": user.get_username() if is_auth else "",
         "committees": services.COMMITTEES,
     }
 
@@ -160,12 +189,31 @@ def logout_view(request: HttpRequest) -> HttpResponse:
 @require_GET
 def posts_list(request: HttpRequest) -> HttpResponse:
     context = base_context(request)
-    context["posts"] = posts_by_committee()
-    context["videos"] = videos_by_category()
+    posts = Post.objects.all()
+    
+    # Handle htmx partial loading
+    if is_htmx(request):
+        return render(request, "posts/partials/post_list.html", {"posts": posts, **context})
+    
+    context["posts"] = posts
     return render(request, "posts/list.html", context)
 
 
-@admin_required
+@require_GET
+def post_detail(request: HttpRequest, slug: str) -> HttpResponse:
+    post = get_object_or_404(Post, slug=slug)
+    context = base_context(request)
+    context["post"] = post
+    context["rendered_content"] = services.render_post_content(post.content)
+    
+    # Handle htmx partial loading
+    if is_htmx(request):
+        return render(request, "posts/partials/post_content.html", context)
+    
+    return render(request, "posts/detail.html", context)
+
+
+@media_publisher_required
 @require_http_methods(["GET", "POST"])
 def create_post(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -174,8 +222,14 @@ def create_post(request: HttpRequest) -> HttpResponse:
             post = form.save(commit=False)
             post.committee = services.normalize_committee_key(post.committee)
             post.save()
+            # Extract and save media from content
+            services.sync_post_media(post)
             messages.success(request, "Post created")
-            return redirect("posts")
+            if is_htmx(request):
+                response = HttpResponse(status=204)
+                response["HX-Redirect"] = f"/posts/{post.slug}"
+                return response
+            return redirect("post_detail", slug=post.slug)
     else:
         form = PostForm()
     context = base_context(request)
@@ -183,7 +237,7 @@ def create_post(request: HttpRequest) -> HttpResponse:
     return render(request, "posts/create.html", context)
 
 
-@admin_required
+@media_publisher_required
 @require_http_methods(["GET", "POST"])
 def edit_post(request: HttpRequest, pk: int) -> HttpResponse:
     post = get_object_or_404(Post, pk=pk)
@@ -193,8 +247,14 @@ def edit_post(request: HttpRequest, pk: int) -> HttpResponse:
             updated = form.save(commit=False)
             updated.committee = services.normalize_committee_key(updated.committee)
             updated.save()
+            # Re-sync media from updated content
+            services.sync_post_media(updated)
             messages.success(request, "Post updated")
-            return redirect("posts")
+            if is_htmx(request):
+                response = HttpResponse(status=204)
+                response["HX-Redirect"] = f"/posts/{updated.slug}"
+                return response
+            return redirect("post_detail", slug=updated.slug)
     else:
         form = PostForm(instance=post)
     context = base_context(request)
@@ -203,7 +263,7 @@ def edit_post(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, "posts/edit.html", context)
 
 
-@admin_required
+@media_publisher_required
 @require_http_methods(["POST"])
 def delete_post(request: HttpRequest, pk: int) -> HttpResponse:
     post = get_object_or_404(Post, pk=pk)
@@ -221,7 +281,7 @@ def videos_list(request: HttpRequest) -> HttpResponse:
     return render(request, "videos/list.html", context)
 
 
-@admin_required
+@media_publisher_required
 @require_http_methods(["GET", "POST"])
 def create_video(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -237,7 +297,7 @@ def create_video(request: HttpRequest) -> HttpResponse:
     return render(request, "videos/create.html", context)
 
 
-@admin_required
+@media_publisher_required
 @require_http_methods(["GET", "POST"])
 def edit_video(request: HttpRequest, pk: int) -> HttpResponse:
     video = get_object_or_404(Video, pk=pk)
@@ -255,7 +315,7 @@ def edit_video(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, "videos/edit.html", context)
 
 
-@admin_required
+@media_publisher_required
 @require_http_methods(["POST"])
 def delete_video(request: HttpRequest, pk: int) -> HttpResponse:
     video = get_object_or_404(Video, pk=pk)
@@ -268,6 +328,51 @@ def delete_video(request: HttpRequest, pk: int) -> HttpResponse:
 def legacy_view(request: HttpRequest) -> HttpResponse:
     context = base_context(request)
     return render(request, "legacy.html", context)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Media Gallery Views
+# ─────────────────────────────────────────────────────────────────────────────
+
+@login_required
+@require_GET
+def media_list(request: HttpRequest) -> HttpResponse:
+    """Media gallery page with htmx filtering"""
+    context = base_context(request)
+    media_type = request.GET.get("media_type", "")
+    search = request.GET.get("search", "")
+    
+    media_qs = Media.objects.select_related("post")
+    
+    if media_type:
+        media_qs = media_qs.filter(media_type=media_type)
+    if search:
+        media_qs = media_qs.filter(title__icontains=search)
+    
+    context["media_items"] = media_qs
+    context["filter_form"] = MediaFilterForm(initial={"media_type": media_type, "search": search})
+    context["current_filter"] = media_type
+    context["current_search"] = search
+    
+    # Handle htmx partial loading for filtering
+    if is_htmx(request):
+        return render(request, "media/partials/media_grid.html", context)
+    
+    return render(request, "media/list.html", context)
+
+
+@require_GET
+def post_editor_help(request: HttpRequest) -> HttpResponse:
+    """Return the formatting help dialog content"""
+    return render(request, "posts/partials/editor_help.html")
+
+
+@require_http_methods(["POST"])
+def preview_post_content(request: HttpRequest) -> HttpResponse:
+    """Preview rendered post content via htmx"""
+    content = request.POST.get("content", "")
+    rendered = services.render_post_content(content)
+    return HttpResponse(rendered)
 
 
 @require_GET
@@ -353,7 +458,7 @@ def delete_chat_message(request: HttpRequest, pk: int) -> HttpResponse:
     return redirect("admin_hub")
 
 
-@admin_required
+@task_publisher_required
 @require_http_methods(["POST"])
 def create_chat_task(request: HttpRequest) -> HttpResponse:
     form = ChatTaskForm(request.POST)
@@ -416,7 +521,7 @@ def add_task_todo(request: HttpRequest, pk: int) -> HttpResponse:
     return HttpResponseBadRequest("Invalid todo")
 
 
-@admin_required
+@task_publisher_required
 @require_http_methods(["POST"])
 def delete_task(request: HttpRequest, pk: int) -> HttpResponse:
     task = get_object_or_404(ChatTask, pk=pk)

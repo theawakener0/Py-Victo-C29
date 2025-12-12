@@ -1,24 +1,24 @@
 {% load static %}
-<nav class="bg-cream-50/90 dark:bg-sage-900/90 backdrop-blur-md shadow-lg border-b border-sage-200 dark:border-sage-700 sticky top-0 z-40 transition-all duration-300">
-    <div class="container mx-auto px-6 py-5">
+<nav class="bg-black/80 backdrop-blur-xl shadow-lg border-b border-white/5 sticky top-0 z-40 transition-all duration-300">
+    <div class="container mx-auto px-6 py-4">
         <div class="flex items-center justify-between gap-4">
-            <a class="flex items-center text-sage-700 dark:text-cream-100 font-serif font-semibold text-3xl hover:text-sage-600 dark:hover:text-cream-200 transition-colors group" href="{% url 'home' %}">
-                <img src="{% static 'VictoLogo.jpg' %}" alt="Victo Logo" class="w-8 h-8 mr-3 rounded-full object-cover" />
-                <span class="bg-gradient-to-r from-sage-800 to-sage-500 dark:from-cream-200 dark:to-cream-100 bg-clip-text text-transparent">C'29</span>
+            <a class="flex items-center text-cream-100 font-serif font-semibold text-2xl hover:text-cream-200 transition-colors group" href="{% url 'home' %}">
+                <img src="{% static 'VictoLogo.jpg' %}" alt="Victo Logo" class="w-9 h-9 mr-3 rounded-full object-cover ring-2 ring-white/10" />
+                <span class="bg-gradient-to-r from-cream-100 to-cream-300 bg-clip-text text-transparent">C'29</span>
             </a>
             <div class="flex items-center gap-3 md:hidden">
-                <button type="button" class="inline-flex items-center justify-center rounded-full border border-sage-200 dark:border-sage-700 p-2 text-sage-700 dark:text-cream-100" data-nav-toggle aria-controls="mobile-nav-panel" aria-expanded="false" aria-label="Toggle navigation">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button type="button" class="inline-flex items-center justify-center rounded-full border border-white/10 p-2.5 text-cream-100 hover:bg-white/5 transition-colors" data-nav-toggle aria-controls="mobile-nav-panel" aria-expanded="false" aria-label="Toggle navigation">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16" />
                     </svg>
                 </button>
             </div>
             <div class="hidden md:flex flex-grow items-center justify-end gap-2">
-                <ul class="flex flex-col md:flex-row md:space-x-3 items-center">
+                <ul class="flex flex-col md:flex-row md:space-x-2 items-center">
                     {% if is_auth %}
                         {% if committees %}
                         <li class="relative mb-2 md:mb-0 group">
-                            <button type="button" aria-haspopup="true" class="flex items-center text-sage-700 dark:text-cream-200 font-medium rounded-full px-5 py-2.5 border-2 border-transparent hover:bg-sage-50 dark:hover:bg-sage-800 hover:text-sage-800 dark:hover:text-cream-100 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-400/70">
+                            <button type="button" aria-haspopup="true" class="flex items-center text-cream-200 font-medium rounded-full px-4 py-2 border border-transparent hover:bg-white/5 hover:text-cream-100 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7l-4 4-4-4m8 6l-4 4-4-4" />
                                 </svg>
@@ -27,17 +27,17 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <div role="menu" class="pointer-events-none absolute left-0 top-full mt-3 min-w-[18rem] rounded-3xl border border-sage-200/70 dark:border-sage-700/70 bg-cream-50/95 dark:bg-sage-900/95 shadow-2xl ring-1 ring-sage-100/60 dark:ring-sage-800/60 opacity-0 scale-95 transform transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:scale-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:scale-100">
-                                <div class="py-3">
+                            <div role="menu" class="pointer-events-none absolute left-0 top-full mt-2 min-w-[18rem] rounded-2xl border border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl opacity-0 scale-95 transform transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:scale-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:scale-100">
+                                <div class="py-2">
                                     {% for item in committees %}
-                                    <a role="menuitem" href="{% url 'committee' item.key %}" class="block px-5 py-3 transition-all duration-200 hover:bg-sage-100/70 dark:hover:bg-sage-800/60 rounded-2xl">
-                                        <div class="flex items-center justify-between text-sm font-semibold text-sage-700 dark:text-cream-100">
+                                    <a role="menuitem" href="{% url 'committee' item.key %}" class="block px-4 py-3 transition-all duration-200 hover:bg-white/5 rounded-xl mx-2">
+                                        <div class="flex items-center justify-between text-sm font-semibold text-cream-100">
                                             <span>{{ item.name }}</span>
                                             {% if committee and committee.key == item.key %}
-                                            <span class="text-xs font-medium text-sage-500 dark:text-sage-300">Active</span>
+                                            <span class="text-xs font-medium text-lavender-300">Active</span>
                                             {% endif %}
                                         </div>
-                                        <p class="mt-1 text-xs text-sage-500 dark:text-sage-400 leading-snug">{{ item.summary }}</p>
+                                        <p class="mt-1 text-xs text-cream-400 leading-snug">{{ item.summary }}</p>
                                     </a>
                                     {% endfor %}
                                 </div>
@@ -45,7 +45,7 @@
                         </li>
                         {% endif %}
                         <li class="mb-2 md:mb-0">
-                            <a class="flex items-center bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white rounded-full px-5 py-2.5 font-medium shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300" href="{% url 'posts' %}">
+                            <a class="flex items-center bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full px-4 py-2 font-medium shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200" href="{% url 'posts' %}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                                 </svg>
@@ -53,7 +53,7 @@
                             </a>
                         </li>
                         <li class="mb-2 md:mb-0">
-                            <a class="flex items-center text-sage-700 dark:text-cream-200 font-medium rounded-full px-5 py-2.5 border-2 border-sage-300 dark:border-sage-600 hover:bg-sage-50 dark:hover:bg-sage-800 hover:border-sage-400 dark:hover:border-sage-500 hover:scale-105 transition-all duration-300" href="{% url 'videos' %}">
+                            <a class="flex items-center text-cream-200 font-medium rounded-full px-4 py-2 border border-white/10 hover:bg-white/5 hover:border-white/20 hover:scale-[1.02] transition-all duration-200" href="{% url 'videos' %}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                 </svg>
@@ -62,7 +62,7 @@
                         </li>
                         {% if is_admin %}
                         <li class="relative mb-2 md:mb-0 group">
-                            <button type="button" aria-haspopup="true" class="flex items-center text-sage-700 dark:text-cream-200 font-medium rounded-full px-5 py-2.5 border-2 border-transparent hover:bg-sage-50 dark:hover:bg-sage-800 hover:text-sage-800 dark:hover:text-cream-100 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-400/70">
+                            <button type="button" aria-haspopup="true" class="flex items-center text-cream-200 font-medium rounded-full px-4 py-2 border border-transparent hover:bg-white/5 hover:text-cream-100 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7l-4 4-4-4m8 6l-4 4-4-4" />
                                 </svg>
@@ -71,36 +71,38 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <div role="menu" class="pointer-events-none absolute left-0 top-full mt-3 min-w-[17rem] rounded-3xl border border-sage-200/70 dark:border-sage-700/70 bg-cream-50/95 dark:bg-sage-900/95 shadow-2xl ring-1 ring-sage-100/60 dark:ring-sage-800/60 opacity-0 scale-95 transform transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:scale-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:scale-100">
-                                <div class="py-3">
-                                    <a role="menuitem" href="{% url 'admin_hub' %}" class="block px-5 py-3 transition-all duration-200 hover:bg-sage-100/70 dark:hover:bg-sage-800/60 rounded-2xl">
-                                        <div class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-100 gap-2">
+                            <div role="menu" class="pointer-events-none absolute left-0 top-full mt-2 min-w-[17rem] rounded-2xl border border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl opacity-0 scale-95 transform transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:scale-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:scale-100">
+                                <div class="py-2">
+                                    <a role="menuitem" href="{% url 'admin_hub' %}" class="block px-4 py-3 transition-all duration-200 hover:bg-white/5 rounded-xl mx-2">
+                                        <div class="flex items-center text-sm font-semibold text-cream-100 gap-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
                                             </svg>
                                             Executive Hub
                                         </div>
-                                        <p class="mt-1 text-xs text-sage-500 dark:text-sage-400 leading-snug">Coordinate tasks, chat, and rapid updates with council leads.</p>
+                                        <p class="mt-1 text-xs text-cream-400 leading-snug">Coordinate tasks, chat, and rapid updates with council leads.</p>
                                     </a>
-                                    <a role="menuitem" href="{% url 'post_create' %}" class="block px-5 py-3 transition-all duration-200 hover:bg-sage-100/70 dark:hover:bg-sage-800/60 rounded-2xl">
-                                        <div class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-100 gap-2">
+                                    {% if can_publish_media %}
+                                    <a role="menuitem" href="{% url 'post_create' %}" class="block px-4 py-3 transition-all duration-200 hover:bg-white/5 rounded-xl mx-2">
+                                        <div class="flex items-center text-sm font-semibold text-cream-100 gap-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4L16.5 3.5z" />
                                             </svg>
                                             Publish Update
                                         </div>
-                                        <p class="mt-1 text-xs text-sage-500 dark:text-sage-400 leading-snug">Announce motions, minutes, and outcomes to the cohort.</p>
+                                        <p class="mt-1 text-xs text-cream-400 leading-snug">Announce motions, minutes, and outcomes to the cohort.</p>
                                     </a>
-                                    <a role="menuitem" href="{% url 'video_create' %}" class="block px-5 py-3 transition-all duration-200 hover:bg-sage-100/70 dark:hover:bg-sage-800/60 rounded-2xl">
-                                        <div class="flex items-center text-sm font-semibold text-sage-700 dark:text-cream-100 gap-2">
+                                    <a role="menuitem" href="{% url 'video_create' %}" class="block px-4 py-3 transition-all duration-200 hover:bg-white/5 rounded-xl mx-2">
+                                        <div class="flex items-center text-sm font-semibold text-cream-100 gap-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                             </svg>
                                             Submit Media
                                         </div>
-                                        <p class="mt-1 text-xs text-sage-500 dark:text-sage-400 leading-snug">Share highlight reels, recaps, and creative assets.</p>
+                                        <p class="mt-1 text-xs text-cream-400 leading-snug">Share highlight reels, recaps, and creative assets.</p>
                                     </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </li>
@@ -108,7 +110,7 @@
                         <li>
                             <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
-                                <button class="flex items-center text-sage-600 dark:text-sage-400 font-medium rounded-full px-5 py-2.5 border-2 border-sage-200 dark:border-sage-700 hover:bg-sage-50 dark:hover:bg-sage-800 hover:text-sage-700 dark:hover:text-sage-300 hover:scale-105 transition-all duration-300">
+                                <button class="flex items-center text-cream-400 font-medium rounded-full px-4 py-2 border border-white/10 hover:bg-white/5 hover:text-cream-200 hover:scale-[1.02] transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                     </svg>
@@ -118,7 +120,7 @@
                         </li>
                     {% else %}
                         <li>
-                            <a class="flex items-center bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-medium rounded-full px-5 py-2.5 shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300" href="{% url 'login' %}">
+                            <a class="flex items-center bg-gradient-to-r from-gray-600 to-gray-700 text-white font-medium rounded-full px-5 py-2.5 shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200" href="{% url 'login' %}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                 </svg>
@@ -135,9 +137,9 @@
 
 <div id="mobile-nav-panel" class="mobile-nav-panel" aria-hidden="true" data-open="false">
     <div class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-        <div class="flex items-center justify-between sticky top-0 pb-4 mb-4 border-b border-sage-200/60 dark:border-sage-700/60 bg-inherit">
-            <p class="text-sm uppercase tracking-[0.35em]">Menu</p>
-            <button type="button" class="inline-flex items-center justify-center rounded-full border border-sage-200 dark:border-sage-700 p-2" data-nav-close aria-label="Close navigation">
+        <div class="flex items-center justify-between sticky top-0 pb-4 mb-4 border-b border-white/10 bg-inherit">
+            <p class="text-sm uppercase tracking-[0.35em] text-cream-300">Menu</p>
+            <button type="button" class="inline-flex items-center justify-center rounded-full border border-white/10 p-2 text-cream-200 hover:bg-white/5" data-nav-close aria-label="Close navigation">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -161,9 +163,9 @@
                 </summary>
                 <div class="mb-2">
                     {% for item in committees %}
-                    <a href="{% url 'committee' item.key %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">
-                        <p class="text-sm font-semibold">{{ item.name }}</p>
-                        <p class="text-xs text-sage-500 dark:text-sage-400">{{ item.summary }}</p>
+                    <a href="{% url 'committee' item.key %}" class="hover:bg-white/5">
+                        <p class="text-sm font-semibold text-cream-100">{{ item.name }}</p>
+                        <p class="text-xs text-cream-400">{{ item.summary }}</p>
                     </a>
                     {% endfor %}
                 </div>
@@ -178,21 +180,23 @@
                     </svg>
                 </summary>
                 <div class="mb-2">
-                    <a href="{% url 'admin_hub' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Executive Hub</a>
-                    <a href="{% url 'post_create' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Publish Update</a>
-                    <a href="{% url 'video_create' %}" class="hover:bg-sage-100/60 dark:hover:bg-sage-800/40">Submit Media</a>
+                    <a href="{% url 'admin_hub' %}" class="hover:bg-white/5">Executive Hub</a>
+                    {% if can_publish_media %}
+                    <a href="{% url 'post_create' %}" class="hover:bg-white/5">Publish Update</a>
+                    <a href="{% url 'video_create' %}" class="hover:bg-white/5">Submit Media</a>
+                    {% endif %}
                 </div>
             </details>
             {% endif %}
             {% if is_auth %}
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white px-4 py-2.5 font-semibold shadow">
+                <button type="submit" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-gray-600 to-gray-700 text-white px-4 py-2.5 font-semibold shadow hover:shadow-lg transition-all">
                     Logout
                 </button>
             </form>
             {% else %}
-            <a href="{% url 'login' %}" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white px-4 py-2.5 font-semibold shadow">
+            <a href="{% url 'login' %}" class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-gray-600 to-gray-700 text-white px-4 py-2.5 font-semibold shadow hover:shadow-lg transition-all">
                 Sign In
             </a>
             {% endif %}

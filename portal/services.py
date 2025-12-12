@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Iterable, Sequence
 
@@ -7,9 +8,11 @@ from django.contrib.auth import get_user_model
 from django.db.models import Case, IntegerField, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from .constants import COMMITTEES, committee_by_key, normalize_committee_key
-from .models import ChatMessage, ChatTask, ChatTaskItem, Post, Video
+from .models import ChatMessage, ChatTask, ChatTaskItem, Media, Post, Video
 
 User = get_user_model()
 
@@ -301,6 +304,237 @@ def videos_by_category() -> dict[str, list[Video]]:
     return {"Videos": list(Video.objects.all())}
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Post Content Rendering (Markdown-like + HTML)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def extract_media_from_content(content: str) -> list[dict]:
+    """Extract image and video URLs from post content"""
+    media_items = []
+    
+    # Markdown image pattern: ![alt](url)
+    md_images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', content)
+    for alt, url in md_images:
+        media_items.append({
+            "url": url.strip(),
+            "title": alt.strip() or "",
+            "media_type": "image"
+        })
+    
+    # HTML img pattern: <img src="url" ...>
+    html_images = re.findall(r'<img[^>]+src=["\']([^"\']+)["\'][^>]*>', content, re.IGNORECASE)
+    for url in html_images:
+        media_items.append({
+            "url": url.strip(),
+            "title": "",
+            "media_type": "image"
+        })
+    
+    # Markdown video/embed pattern: [video](url) or special syntax
+    # YouTube/Vimeo embedded links
+    video_patterns = [
+        r'\[video\]\(([^)]+)\)',
+        r'(?:https?://)?(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]+)',
+        r'(?:https?://)?(?:www\.)?vimeo\.com/(\d+)',
+    ]
+    
+    for pattern in video_patterns:
+        matches = re.findall(pattern, content)
+        for match in matches:
+            url = match if match.startswith('http') else f"https://youtube.com/watch?v={match}"
+            media_items.append({
+                "url": url,
+                "title": "",
+                "media_type": "video"
+            })
+    
+    # HTML video/iframe patterns
+    html_videos = re.findall(r'<(?:video|iframe)[^>]+src=["\']([^"\']+)["\'][^>]*>', content, re.IGNORECASE)
+    for url in html_videos:
+        media_items.append({
+            "url": url.strip(),
+            "title": "",
+            "media_type": "video"
+        })
+    
+    return media_items
+
+
+def sync_post_media(post: Post) -> None:
+    """Extract media from post content and sync with Media model"""
+    # Remove existing media links for this post
+    Media.objects.filter(post=post).delete()
+    
+    # Extract and create new media entries
+    media_items = extract_media_from_content(post.content)
+    
+    # Also include thumbnail if present
+    if post.thumbnail:
+        media_items.insert(0, {
+            "url": post.thumbnail,
+            "title": f"Thumbnail: {post.title}",
+            "media_type": "image"
+        })
+    
+    # Create Media objects, avoiding duplicates
+    seen_urls = set()
+    for item in media_items:
+        if item["url"] not in seen_urls:
+            seen_urls.add(item["url"])
+            Media.objects.create(
+                url=item["url"],
+                title=item["title"],
+                media_type=item["media_type"],
+                post=post
+            )
+
+
+def render_post_content(content: str) -> str:
+    """
+    Render post content from Markdown-like syntax to HTML.
+    Supports: headings, bold, italic, underline, code blocks, lists, images, videos, links.
+    """
+    # Work with a copy
+    html = content
+    
+    # Escape HTML special chars first (but preserve intentional HTML)
+    # We'll process markdown then allow specific HTML tags
+    
+    # Code blocks (```code```) - preserve and highlight
+    def code_block_replace(match):
+        lang = match.group(1) or ""
+        code = escape(match.group(2))
+        return f'<pre class="code-block bg-sage-100 dark:bg-sage-800 rounded-xl p-4 overflow-x-auto my-4"><code class="text-sm font-mono text-sage-800 dark:text-cream-100" data-lang="{lang}">{code}</code></pre>'
+    
+    html = re.sub(r'```(\w*)\n?([\s\S]*?)```', code_block_replace, html)
+    
+    # Inline code (`code`)
+    html = re.sub(r'`([^`]+)`', r'<code class="bg-sage-100 dark:bg-sage-800 px-2 py-0.5 rounded text-sm font-mono">\1</code>', html)
+    
+    # Headings
+    html = re.sub(r'^### (.+)$', r'<h3 class="text-xl font-serif font-semibold text-sage-800 dark:text-cream-100 mt-6 mb-3">\1</h3>', html, flags=re.MULTILINE)
+    html = re.sub(r'^## (.+)$', r'<h2 class="text-2xl font-serif font-semibold text-sage-800 dark:text-cream-100 mt-8 mb-4">\1</h2>', html, flags=re.MULTILINE)
+    html = re.sub(r'^# (.+)$', r'<h1 class="text-3xl font-serif font-bold text-sage-800 dark:text-cream-100 mt-8 mb-4">\1</h1>', html, flags=re.MULTILINE)
+    
+    # Bold, Italic, Underline
+    html = re.sub(r'\*\*\*(.+?)\*\*\*', r'<strong><em>\1</em></strong>', html)
+    html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
+    html = re.sub(r'__(.+?)__', r'<u>\1</u>', html)
+    html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', html)
+    html = re.sub(r'_(.+?)_', r'<em>\1</em>', html)
+    
+    # Images: ![alt](url)
+    def img_replace(match):
+        alt = match.group(1)
+        url = match.group(2)
+        return f'<figure class="my-6"><img src="{url}" alt="{alt}" class="rounded-2xl shadow-lg max-w-full h-auto mx-auto" loading="lazy">{f"<figcaption class=text-center text-sm text-sage-500 dark:text-sage-400 mt-2>{alt}</figcaption>" if alt else ""}</figure>'
+    
+    html = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', img_replace, html)
+    
+    # Links: [text](url)
+    html = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" class="text-sage-600 dark:text-cream-300 underline hover:text-sage-800 dark:hover:text-cream-100 transition-colors">\1</a>', html)
+    
+    # YouTube embeds
+    def youtube_embed(match):
+        video_id = match.group(1)
+        return f'<div class="relative w-full aspect-video my-6"><iframe src="https://www.youtube.com/embed/{video_id}" class="absolute inset-0 w-full h-full rounded-2xl shadow-lg" frameborder="0" allowfullscreen loading="lazy"></iframe></div>'
+    
+    html = re.sub(r'(?:https?://)?(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]+)', youtube_embed, html)
+    
+    # Unordered lists
+    def process_ul(text):
+        lines = text.split('\n')
+        result = []
+        in_list = False
+        for line in lines:
+            if re.match(r'^[\-\*] ', line):
+                if not in_list:
+                    result.append('<ul class="list-disc list-inside space-y-2 my-4 ml-4">')
+                    in_list = True
+                item = re.sub(r'^[\-\*] ', '', line)
+                result.append(f'<li class="text-sage-700 dark:text-cream-200">{item}</li>')
+            else:
+                if in_list:
+                    result.append('</ul>')
+                    in_list = False
+                result.append(line)
+        if in_list:
+            result.append('</ul>')
+        return '\n'.join(result)
+    
+    html = process_ul(html)
+    
+    # Ordered lists
+    def process_ol(text):
+        lines = text.split('\n')
+        result = []
+        in_list = False
+        for line in lines:
+            if re.match(r'^\d+\. ', line):
+                if not in_list:
+                    result.append('<ol class="list-decimal list-inside space-y-2 my-4 ml-4">')
+                    in_list = True
+                item = re.sub(r'^\d+\. ', '', line)
+                result.append(f'<li class="text-sage-700 dark:text-cream-200">{item}</li>')
+            else:
+                if in_list:
+                    result.append('</ol>')
+                    in_list = False
+                result.append(line)
+        if in_list:
+            result.append('</ol>')
+        return '\n'.join(result)
+    
+    html = process_ol(html)
+    
+    # Horizontal rule
+    html = re.sub(r'^---+$', r'<hr class="my-8 border-sage-200 dark:border-sage-700">', html, flags=re.MULTILINE)
+    
+    # Blockquotes
+    def process_blockquotes(text):
+        lines = text.split('\n')
+        result = []
+        in_quote = False
+        for line in lines:
+            if line.startswith('> '):
+                if not in_quote:
+                    result.append('<blockquote class="border-l-4 border-sage-400 dark:border-sage-600 pl-4 py-2 my-4 italic text-sage-600 dark:text-sage-300">')
+                    in_quote = True
+                result.append(line[2:])
+            else:
+                if in_quote:
+                    result.append('</blockquote>')
+                    in_quote = False
+                result.append(line)
+        if in_quote:
+            result.append('</blockquote>')
+        return '\n'.join(result)
+    
+    html = process_blockquotes(html)
+    
+    # Paragraphs - wrap remaining text blocks
+    paragraphs = html.split('\n\n')
+    processed = []
+    for p in paragraphs:
+        p = p.strip()
+        if p and not p.startswith('<'):
+            # Wrap plain text in paragraph tags
+            lines = p.split('\n')
+            wrapped_lines = []
+            for line in lines:
+                if line.strip() and not line.strip().startswith('<'):
+                    wrapped_lines.append(f'<p class="text-sage-700 dark:text-cream-200 leading-relaxed mb-4">{line}</p>')
+                else:
+                    wrapped_lines.append(line)
+            processed.append('\n'.join(wrapped_lines))
+        else:
+            processed.append(p)
+    
+    html = '\n\n'.join(processed)
+    
+    return mark_safe(html)
+
+
 __all__ = [
     "TaskFilter",
     "TaskSummary",
@@ -317,4 +551,7 @@ __all__ = [
     "videos_by_category",
     "normalize_committee_key",
     "committee_by_key",
+    "extract_media_from_content",
+    "sync_post_media",
+    "render_post_content",
 ]

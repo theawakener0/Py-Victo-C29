@@ -1,25 +1,38 @@
 {% extends "base.html" %}
 {% block title %}Register • VC C'29{% endblock %}
 {% block content %}
-<div class="container mx-auto px-4 py-16">
-    <div class="flex justify-center">
-        <div class="w-full max-w-xl">
-            <div class="bg-cream-50/85 dark:bg-sage-900/75 border border-sage-200 dark:border-sage-700 rounded-3xl shadow-xl p-8">
-                <h1 class="text-3xl font-serif text-sage-800 dark:text-cream-100 mb-6 text-center">Join the Union</h1>
-                <form method="post" class="space-y-4">
-                    {% csrf_token %}
+<div class="container mx-auto px-4 py-16 min-h-[70vh] flex items-center justify-center">
+    <div class="w-full max-w-xl">
+        <div class="bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8">
+            <h1 class="text-3xl font-serif text-cream-100 mb-2 text-center">Join the Union</h1>
+            <p class="text-cream-300/70 text-center mb-8 text-sm">Create your account to get started</p>
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="bg-red-500/20 border border-red-500/30 rounded-xl p-4 text-red-200 text-sm">
                     {{ form.non_field_errors }}
-                    {% for field in form %}
-                    <div>
-                        <label class="block text-sm font-semibold text-sage-600 dark:text-cream-200 mb-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {{ field.errors }}
-                    </div>
-                    {% endfor %}
-                    <button type="submit" class="w-full inline-flex justify-center px-4 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 text-white">Create Account</button>
-                </form>
-                <p class="mt-6 text-center text-sm text-sage-500 dark:text-sage-300">Already registered? <a href="{% url 'login' %}" class="text-lavender-500 dark:text-lavender-300 underline">Sign in</a>.</p>
-            </div>
+                </div>
+                {% endif %}
+                {% for field in form %}
+                <div>
+                    <label class="block text-sm font-semibold text-cream-200 mb-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="mt-1 text-red-400 text-sm">{{ field.errors.0 }}</p>
+                    {% endif %}
+                    {% if field.help_text %}
+                    <p class="mt-1 text-cream-400/60 text-xs">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="w-full inline-flex justify-center items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-lavender-600 to-lavender-700 hover:from-lavender-500 hover:to-lavender-600 text-white font-semibold transition-all duration-300 shadow-lg shadow-lavender-500/20 hover:shadow-lavender-500/30 mt-6">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    Create Account
+                </button>
+            </form>
+            <p class="mt-8 text-center text-sm text-cream-400">Already registered? <a href="{% url 'login' %}" class="text-lavender-400 hover:text-lavender-300 underline underline-offset-2 transition-colors">Sign in</a>.</p>
         </div>
     </div>
 </div>

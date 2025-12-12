@@ -28,9 +28,6 @@
         opacity: 0.9;
     }
     #media-hero::after {
-        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(17, 24, 39, 0.55) 55%, rgba(17, 24, 39, 0) 100%);
-    }
-    html.dark #media-hero::after {
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.62) 55%, rgba(0, 0, 0, 0) 100%);
     }
     #media-hero .hero-inner {
@@ -58,11 +55,11 @@
     <div class="max-w-6xl mx-auto">
         <div class="flex items-center justify-between flex-col md:flex-row gap-6 md:gap-4 mb-10">
             <div>
-                <h2 class="text-3xl md:text-4xl font-serif font-light text-sage-800 dark:text-cream-100">All Features</h2>
-                <p class="text-sage-600 dark:text-cream-300 mt-2">Highlights curated by the Executive Media desk.</p>
+                <h2 class="text-3xl md:text-4xl font-serif font-light text-cream-100">All Features</h2>
+                <p class="text-cream-300/80 mt-2">Highlights curated by the Executive Media desk.</p>
             </div>
-            {% if is_admin %}
-            <a href="{% url 'video_create' %}" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+            {% if can_publish_media %}
+            <a href="{% url 'video_create' %}" class="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-lavender-600 to-lavender-700 hover:from-lavender-500 hover:to-lavender-600 text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -73,12 +70,12 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {% for video in videos.Videos %}
-            <article class="group bg-cream-50/80 dark:bg-sage-900/70 backdrop-blur-lg rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl dark:shadow-cream-200/20 transition-all duration-500 hover:-translate-y-2 border border-sage-200 dark:border-sage-700">
+            <article class="group bg-black/50 backdrop-blur-xl rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/10">
                 {% if video.image %}
                 <div class="relative overflow-hidden">
                     <img src="{{ video.image }}" alt="{{ video.title }}" class="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-sage-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="absolute top-4 right-4 bg-sage-900/90 dark:bg-cream-200 text-white dark:text-sage-900 p-3 rounded-full shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute top-4 right-4 bg-lavender-600 text-white p-3 rounded-full shadow-lg group-hover:scale-110 transition-transform duration-300">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z"></path>
                         </svg>
@@ -86,21 +83,21 @@
                 </div>
                 {% endif %}
                 <div class="p-6">
-                    <h3 class="text-2xl font-serif font-semibold mb-4 text-sage-800 dark:text-cream-100 group-hover:text-sage-600 dark:group-hover:text-cream-200 transition-colors duration-300">{{ video.title }}</h3>
-                    <a href="{{ video.url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sage-700 dark:text-cream-200 hover:text-sage-900 dark:hover:text-cream-100 font-semibold transition-colors duration-300">
+                    <h3 class="text-2xl font-serif font-semibold mb-4 text-cream-100 group-hover:text-lavender-300 transition-colors duration-300">{{ video.title }}</h3>
+                    <a href="{{ video.url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-cream-200 hover:text-cream-100 font-semibold transition-colors duration-300">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
                         Watch Video
                     </a>
-                    {% if is_admin %}
+                    {% if can_publish_media %}
                     <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="{% url 'video_edit' video.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-sage-300 dark:border-sage-600 text-sage-700 dark:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800 transition-all duration-300">
+                        <a href="{% url 'video_edit' video.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-white/20 text-cream-100 hover:bg-white/10 transition-all duration-300">
                             Edit
                         </a>
                         <form method="post" action="{% url 'video_delete' video.id %}" onsubmit="return confirm('Delete this media entry?');">
                             {% csrf_token %}
-                            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-300 dark:border-red-600 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 transition-all duration-300">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all duration-300">
                                 Delete
                             </button>
                         </form>
@@ -109,14 +106,14 @@
                 </div>
             </article>
             {% empty %}
-            <div class="col-span-full bg-gradient-to-br from-cream-50 to-sage-100 dark:from-sage-900/35 dark:to-sage-800/25 border-2 border-dashed border-sage-200 dark:border-sage-600 text-center rounded-3xl p-12 backdrop-blur-sm animate-fade-in" role="alert">
-                <svg class="w-16 h-16 mx-auto mb-4 text-sage-500 dark:text-cream-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="col-span-full bg-black/40 backdrop-blur-xl border-2 border-dashed border-white/20 text-center rounded-3xl p-12 animate-fade-in" role="alert">
+                <svg class="w-16 h-16 mx-auto mb-4 text-cream-300/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                 </svg>
-                <p class="text-xl font-serif font-semibold text-sage-800 dark:text-cream-100 mb-2">No footage yet</p>
-                <p class="text-sage-600 dark:text-cream-200">Archive the first Class of '29 event highlight for the cohort.</p>
-                {% if is_admin %}
-                <a href="{% url 'video_create' %}" class="inline-flex items-center mt-6 bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <p class="text-xl font-serif font-semibold text-cream-100 mb-2">No footage yet</p>
+                <p class="text-cream-300/80">Archive the first Class of '29 event highlight for the cohort.</p>
+                {% if can_publish_media %}
+                <a href="{% url 'video_create' %}" class="inline-flex items-center mt-6 bg-gradient-to-r from-lavender-600 to-lavender-700 hover:from-lavender-500 hover:to-lavender-600 text-white font-semibold rounded-full px-8 py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                     Upload a Highlight
                 </a>
                 {% endif %}
@@ -128,25 +125,4 @@
 {% endblock %}
 
 {% block extra_body %}
-<button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 transform hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group" aria-label="Toggle theme">
-    <svg class="w-6 h-6 block dark:hidden group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-    </svg>
-    <svg class="w-6 h-6 hidden dark:block group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-    </svg>
-</button>
-<script>
-    function toggleTheme() {
-        var html = document.documentElement;
-        var isDark = html.classList.contains('dark');
-        if (isDark) {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        } else {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    }
-</script>
 {% endblock %}

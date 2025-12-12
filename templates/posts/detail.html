@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }} - VC C'29 Student Union{% endblock %}
+
+{% block extra_head %}
+<style>
+    #post-hero {
+        position: relative;
+        overflow: hidden;
+    }
+    #post-hero::before,
+    #post-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    #post-hero::before {
+        background-image: url('{% if post.thumbnail %}{{ post.thumbnail }}{% else %}{% static "VictoBackground.jpg" %}{% endif %}');
+        background-size: cover;
+        background-position: center;
+        filter: blur(8px);
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    #post-hero::after {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.98) 100%);
+    }
+    #post-hero .hero-inner {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .post-content {
+        line-height: 1.8;
+    }
+    .post-content h1, .post-content h2, .post-content h3 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    .post-content p {
+        margin-bottom: 1.5rem;
+    }
+    .post-content img {
+        max-width: 100%;
+        border-radius: 1rem;
+        margin: 1.5rem auto;
+    }
+    .post-content pre {
+        overflow-x: auto;
+    }
+    .post-content code {
+        font-size: 0.9em;
+    }
+    .post-content ul, .post-content ol {
+        margin-left: 1.5rem;
+    }
+    .post-content blockquote {
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="post-hero" class="relative min-h-[45vh] flex items-end justify-center text-center animate-fade-in">
+    <div class="hero-inner container mx-auto px-6 py-16">
+        <div class="max-w-4xl mx-auto space-y-4">
+            <!-- Back Link -->
+            <a href="{% url 'posts' %}" 
+               hx-get="{% url 'posts' %}" 
+               hx-target="#main-content" 
+               hx-push-url="true"
+               class="inline-flex items-center text-cream-200/80 hover:text-cream-100 transition-colors mb-6">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Updates
+            </a>
+            
+            <!-- Meta -->
+            <div class="flex items-center justify-center gap-4 flex-wrap">
+                <span class="text-cream-200/70 text-sm flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {{ post.date|date:"F d, Y" }}
+                </span>
+                {% if post.committee %}
+                <span class="text-xs font-semibold uppercase tracking-wide text-cream-100 bg-cream-100/20 border border-cream-100/30 rounded-full px-3 py-1">
+                    {{ post.committee_label|default:post.committee }}
+                </span>
+                {% endif %}
+            </div>
+            
+            <!-- Title -->
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-light bg-gradient-to-r from-cream-100 via-cream-300 to-cream-100 text-transparent bg-clip-text leading-tight">
+                {{ post.title }}
+            </h1>
+            
+            <!-- Excerpt -->
+            {% if post.excerpt %}
+            <p class="text-lg text-cream-200/90 font-light leading-relaxed max-w-2xl mx-auto">
+                {{ post.excerpt }}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container mx-auto px-6 py-16">
+    <article class="max-w-4xl mx-auto">
+        <!-- Featured Image -->
+        {% if post.thumbnail %}
+        <figure class="mb-12 -mt-24 relative z-10">
+            <img src="{{ post.thumbnail }}" 
+                 alt="{{ post.title }}" 
+                 class="w-full rounded-3xl shadow-2xl"
+                 loading="lazy">
+        </figure>
+        {% endif %}
+        
+        <!-- Post Content -->
+        <div id="post-content" 
+             class="post-content bg-black/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-xl border border-white/10">
+            {% include "posts/partials/post_content.html" %}
+        </div>
+        
+        <!-- Post Footer -->
+        <div class="mt-12 pt-8 border-t border-white/10">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center text-cream-400/70 text-sm">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Last updated: {{ post.updated_at|date:"M d, Y" }}
+                </div>
+                
+                {% if can_publish_media %}
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'post_edit' post.id %}" 
+                       class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-white/20 text-cream-100 hover:bg-white/10 transition-all duration-300">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Edit Post
+                    </a>
+                    <form method="post" action="{% url 'post_delete' post.id %}" onsubmit="return confirm('Delete this post?');" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all duration-300">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            Delete
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="mt-12 text-center">
+            <a href="{% url 'posts' %}" 
+               hx-get="{% url 'posts' %}" 
+               hx-target="#main-content" 
+               hx-push-url="true"
+               class="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-lavender-600 to-lavender-700 hover:from-lavender-500 hover:to-lavender-600 text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                View All Updates
+            </a>
+        </div>
+    </article>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}

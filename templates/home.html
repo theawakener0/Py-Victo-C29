@@ -18,25 +18,23 @@
         filter: blur(4px);
         -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
         mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+        opacity: 0.6;
         z-index: 0;
     }
     #Main::after {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(180deg, rgba(17, 24, 39, 0.75) 0%, rgba(17, 24, 39, 0.52) 50%, rgba(17, 24, 39, 0.2) 78%, rgba(17, 24, 39, 0) 100%);
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.65) 50%, rgba(0, 0, 0, 0.3) 78%, rgba(0, 0, 0, 0) 100%);
         pointer-events: none;
         z-index: 0;
-    }
-    html.dark #Main::after {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.62) 50%, rgba(0, 0, 0, 0.26) 78%, rgba(0, 0, 0, 0) 100%);
     }
     #Main .main-inner {
         position: relative;
         z-index: 1;
     }
     @media (max-width: 1024px) {
-        #Main {
+        #Main::before {
             background-attachment: scroll;
         }
     }
@@ -49,17 +47,17 @@
         <div class="flex justify-center">
             <div class="w-full md:w-10/12 lg:w-8/12 max-w-4xl">
                 <div class="text-center mb-16 animate-slide-up">
-                    <p class="uppercase tracking-[0.3em] text-xs md:text-sm text-lavender-400 dark:text-lavender-200 mb-4">Cuncti Gens Una Sumus · We Are All One People</p>
-                    <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-serif font-light bg-gradient-to-r from-sage-900 via-sage-500 to-sage-800 dark:from-cream-100 dark:via-cream-300 dark:to-cream-100 bg-clip-text text-transparent mb-6 leading-tight">Victoria College C'29 Student Union</h1>
-                    <p class="text-lg md:text-xl text-sage-600 dark:text-cream-200 font-light max-w-3xl mx-auto leading-relaxed">Representing the 2029 cohort of Alexandria's historic Victoria College—where generations of thinkers, artists, diplomats, and innovators have shared classrooms since 1902. We honor that heritage by building community, elevating student voice, and preparing the next chapter together.</p>
+                    <p class="uppercase tracking-[0.3em] text-xs md:text-sm text-lavender-300 mb-4">Cuncti Gens Una Sumus · We Are All One People</p>
+                    <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-serif font-light bg-gradient-to-r from-cream-100 via-cream-200 to-cream-100 bg-clip-text text-transparent mb-6 leading-tight">Victoria College C'29 Student Union</h1>
+                    <p class="text-lg md:text-xl text-cream-300 font-light max-w-3xl mx-auto leading-relaxed">Representing the 2029 cohort of Alexandria's historic Victoria College—where generations of thinkers, artists, diplomats, and innovators have shared classrooms since 1902. We honor that heritage by building community, elevating student voice, and preparing the next chapter together.</p>
                     <div class="cta-cluster flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-                        <a href="#initiatives" class="inline-flex items-center bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-medium px-6 py-3 rounded-full shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        <a href="#initiatives" class="inline-flex items-center bg-gradient-to-r from-gray-600 to-gray-700 text-white font-medium px-6 py-3 rounded-full shadow-md hover:shadow-lg hover:scale-[1.02] transition-all duration-200">
                             Explore Initiatives
                         </a>
-                        <a href="{% url 'posts' %}" class="inline-flex items-center text-sage-700 dark:text-cream-100 font-medium px-6 py-3 rounded-full border-2 border-sage-300 dark:border-sage-600 hover:bg-sage-50 dark:hover:bg-sage-800 hover:border-sage-400 dark:hover:border-sage-500 hover:scale-105 transition-all duration-300">
+                        <a href="{% url 'posts' %}" class="inline-flex items-center text-cream-100 font-medium px-6 py-3 rounded-full border border-white/15 hover:bg-white/5 hover:border-white/25 hover:scale-[1.02] transition-all duration-200">
                             View Latest Updates
                         </a>
-                        <a href="{% url 'legacy' %}" class="inline-flex items-center text-sage-700 dark:text-cream-100 font-medium px-6 py-3 rounded-full border-2 border-lavender-300 dark:border-lavender-400 hover:bg-lavender-100/60 dark:hover:bg-sage-800 hover:border-lavender-400 dark:hover:border-lavender-300 hover:scale-105 transition-all duration-300">
+                        <a href="{% url 'legacy' %}" class="inline-flex items-center text-cream-100 font-medium px-6 py-3 rounded-full border border-lavender-400/30 hover:bg-lavender-400/10 hover:border-lavender-400/50 hover:scale-[1.02] transition-all duration-200">
                             Explore Our Legacy
                         </a>
                     </div>
@@ -72,61 +70,61 @@
 <div class="container mx-auto px-6 py-16">
     <div class="flex justify-center">
         <div class="w-full md:w-10/12 lg:w-8/12 max-w-4xl">
-            <div id="about" class="bg-cream-50/85 dark:bg-sage-900/80 backdrop-blur-lg rounded-3xl shadow-xl dark:shadow-2xl border border-sage-100 dark:border-sage-800 p-10 md:p-12 mb-16 hover:shadow-2xl dark:hover:shadow-cream-300/25 transition-all duration-500">
-                <h2 class="text-3xl md:text-4xl font-serif font-light text-sage-700 dark:text-cream-100 mb-6">Who We Are</h2>
-                <p class="mb-5 text-sage-600 dark:text-cream-200 leading-relaxed text-lg">Rooted on El Iqbal Street and guided by over a century of scholarship, the Victoria College Student Union for the Class of 2029 stands on the shoulders of alumni who helped shape culture, diplomacy, and the arts across the region. Our union connects that legacy to today’s learners.</p>
-                <ul class="space-y-3 text-sage-600 dark:text-cream-200 text-lg leading-relaxed">
-                    <li class="flex items-start"><span class="mt-1 mr-3 h-2 w-2 rounded-full bg-lavender-400"></span>Championing every student voice through councils, open forums, and collaborative decision-making.</li>
-                    <li class="flex items-start"><span class="mt-1 mr-3 h-2 w-2 rounded-full bg-lavender-400"></span>Curating programs that balance academic rigor with wellbeing, creative expression, and service across Alexandria.</li>
-                    <li class="flex items-start"><span class="mt-1 mr-3 h-2 w-2 rounded-full bg-lavender-400"></span>Celebrating the College’s motto—<em>Cuncti Gens Una Sumus</em>—by welcoming diverse backgrounds into one shared community.</li>
+            <div id="about" class="bg-black/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-10 md:p-12 mb-16 hover:border-white/15 transition-all duration-300">
+                <h2 class="text-3xl md:text-4xl font-serif font-light text-cream-100 mb-6">Who We Are</h2>
+                <p class="mb-5 text-cream-300 leading-relaxed text-lg">Rooted on El Iqbal Street and guided by over a century of scholarship, the Victoria College Student Union for the Class of 2029 stands on the shoulders of alumni who helped shape culture, diplomacy, and the arts across the region. Our union connects that legacy to today's learners.</p>
+                <ul class="space-y-3 text-cream-300 text-lg leading-relaxed">
+                    <li class="flex items-start"><span class="mt-2 mr-3 h-2 w-2 rounded-full bg-lavender-400 flex-shrink-0"></span>Championing every student voice through councils, open forums, and collaborative decision-making.</li>
+                    <li class="flex items-start"><span class="mt-2 mr-3 h-2 w-2 rounded-full bg-lavender-400 flex-shrink-0"></span>Curating programs that balance academic rigor with wellbeing, creative expression, and service across Alexandria.</li>
+                    <li class="flex items-start"><span class="mt-2 mr-3 h-2 w-2 rounded-full bg-lavender-400 flex-shrink-0"></span>Celebrating the College's motto—<em>Cuncti Gens Una Sumus</em>—by welcoming diverse backgrounds into one shared community.</li>
                 </ul>
             </div>
 
             <section id="initiatives" class="mb-16">
-                <h2 class="text-3xl font-serif font-light text-sage-700 dark:text-cream-100 mb-6 text-center">Union Pillars for 2025‑2026</h2>
-                <p class="text-center text-sage-600 dark:text-cream-200 mb-10 max-w-3xl mx-auto">Each pillar is stewarded by classmates across houses and disciplines, ensuring that every corner of Victoria College is represented in the work we undertake this academic year.</p>
+                <h2 class="text-3xl font-serif font-light text-cream-100 mb-6 text-center">Union Pillars for 2025‑2026</h2>
+                <p class="text-center text-cream-400 mb-10 max-w-3xl mx-auto">Each pillar is stewarded by classmates across houses and disciplines, ensuring that every corner of Victoria College is represented in the work we undertake this academic year.</p>
                 <div class="auto-grid gap-6">
-                    <article class="bg-cream-50/85 dark:bg-sage-900/75 border border-sage-100 dark:border-sage-700 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <h3 class="text-2xl font-serif font-semibold text-sage-800 dark:text-cream-100 mb-3">Scholastic Endeavour</h3>
-                        <p class="text-sage-600 dark:text-cream-200 leading-relaxed">Peer-led study salons, mentorship for IGCSE and IB cohorts, and academic partnerships that bridge alumni expertise with student goals.</p>
+                    <article class="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 shadow-lg hover:shadow-xl hover:border-white/15 transition-all duration-300 hover:-translate-y-1">
+                        <h3 class="text-2xl font-serif font-semibold text-cream-100 mb-3">Scholastic Endeavour</h3>
+                        <p class="text-cream-300 leading-relaxed">Peer-led study salons, mentorship for IGCSE and IB cohorts, and academic partnerships that bridge alumni expertise with student goals.</p>
                     </article>
-                    <article class="bg-cream-50/85 dark:bg-sage-900/75 border border-sage-100 dark:border-sage-700 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <h3 class="text-2xl font-serif font-semibold text-sage-800 dark:text-cream-100 mb-3">Community &amp; Service</h3>
-                        <p class="text-sage-600 dark:text-cream-200 leading-relaxed">Citywide outreach with Alexandrian schools, coastal clean-up drives, and fundraising that responds to the needs of our neighbours.</p>
+                    <article class="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 shadow-lg hover:shadow-xl hover:border-white/15 transition-all duration-300 hover:-translate-y-1">
+                        <h3 class="text-2xl font-serif font-semibold text-cream-100 mb-3">Community &amp; Service</h3>
+                        <p class="text-cream-300 leading-relaxed">Citywide outreach with Alexandrian schools, coastal clean-up drives, and fundraising that responds to the needs of our neighbours.</p>
                     </article>
-                    <article class="bg-cream-50/85 dark:bg-sage-900/75 border border-sage-100 dark:border-sage-700 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <h3 class="text-2xl font-serif font-semibold text-sage-800 dark:text-cream-100 mb-3">Culture &amp; Legacy</h3>
-                        <p class="text-sage-600 dark:text-cream-200 leading-relaxed">Showcasing music, theatre, and debate inspired by the College’s storied alumni—from celebrated directors to global diplomats.</p>
+                    <article class="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 shadow-lg hover:shadow-xl hover:border-white/15 transition-all duration-300 hover:-translate-y-1">
+                        <h3 class="text-2xl font-serif font-semibold text-cream-100 mb-3">Culture &amp; Legacy</h3>
+                        <p class="text-cream-300 leading-relaxed">Showcasing music, theatre, and debate inspired by the College's storied alumni—from celebrated directors to global diplomats.</p>
                     </article>
                 </div>
             </section>
 
-            <h2 class="text-3xl font-serif font-light text-sage-700 dark:text-cream-100 mb-6 text-center">Media Room</h2>
-            <p class="text-center text-sage-500 dark:text-cream-300 mb-8">Catch highlights from assemblies, campaigns, and creative labs in the <a href="{% url 'videos' %}" class="text-lavender-500 dark:text-lavender-300 hover:text-lavender-600 dark:hover:text-lavender-200 underline decoration-lavender-300 underline-offset-4 transition-colors">full media library</a>.</p>
+            <h2 class="text-3xl font-serif font-light text-cream-100 mb-6 text-center">Media Room</h2>
+            <p class="text-center text-cream-400 mb-8">Catch highlights from assemblies, campaigns, and creative labs in the <a href="{% url 'videos' %}" class="text-lavender-300 hover:text-lavender-200 underline underline-offset-4 transition-colors">full media library</a>.</p>
             <div id="blog-videos-container" class="space-y-6 mb-16 stack-xl">
                 {% for video in videos.Videos %}
-                <article class="bg-cream-50/80 dark:bg-sage-900/70 backdrop-blur-lg rounded-2xl p-8 shadow-lg dark:shadow-2xl border border-sage-100 dark:border-sage-700 hover:shadow-xl dark:hover:shadow-cream-200/30 hover:border-sage-200 dark:hover:border-sage-600 transition-all duration-500 transform hover:-translate-y-1 group">
-                    <h3 class="text-2xl font-serif font-medium text-sage-700 dark:text-cream-100 mb-4 leading-snug group-hover:text-lavender-600 dark:group-hover:text-lavender-300 transition-colors">{{ video.title }}</h3>
+                <article class="bg-black/50 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-white/10 hover:shadow-xl hover:border-white/15 transition-all duration-300 hover:-translate-y-1 group">
+                    <h3 class="text-2xl font-serif font-medium text-cream-100 mb-4 leading-snug group-hover:text-lavender-300 transition-colors">{{ video.title }}</h3>
                     {% if video.image %}
-                    <div class="overflow-hidden rounded-xl mb-4">
-                        <img src="{{ video.image }}" alt="{{ video.title }}" class="w-full rounded-xl shadow-md group-hover:scale-105 transition-transform duration-500" style="max-height: 300px; object-fit: cover;">
+                    <div class="overflow-hidden rounded-lg mb-4">
+                        <img src="{{ video.image }}" alt="{{ video.title }}" class="w-full rounded-lg shadow-md group-hover:scale-105 transition-transform duration-500" style="max-height: 300px; object-fit: cover;">
                     </div>
                     {% endif %}
-                    <a href="{{ video.url }}" target="_blank" class="inline-flex items-center text-lavender-500 dark:text-lavender-300 hover:text-lavender-600 dark:hover:text-lavender-200 font-medium transition-all group-hover:gap-3 gap-2">
+                    <a href="{{ video.url }}" target="_blank" class="inline-flex items-center text-lavender-300 hover:text-lavender-200 font-medium transition-all group-hover:gap-3 gap-2">
                         <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span class="underline decoration-lavender-300 underline-offset-4">Watch Video</span>
+                        <span class="underline underline-offset-4">Watch Video</span>
                     </a>
-                    {% if is_admin %}
+                    {% if can_publish_media %}
                     <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="{% url 'video_edit' video.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-sage-300 dark:border-sage-600 text-sage-700 dark:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800 transition-all duration-300">
+                        <a href="{% url 'video_edit' video.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border border-white/15 text-cream-200 hover:bg-white/5 transition-all duration-200">
                             Edit
                         </a>
                         <form method="post" action="{% url 'video_delete' video.id %}" onsubmit="return confirm('Delete this video highlight?');">
                             {% csrf_token %}
-                            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-300 dark:border-red-600 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 transition-all duration-300">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all duration-200">
                                 Delete
                             </button>
                         </form>
@@ -136,37 +134,37 @@
                 {% endfor %}
 
                 {% if videos.Videos|length == 0 %}
-                <div class="bg-gradient-to-br from-cream-50/80 to-sage-100/60 dark:from-sage-900/30 dark:to-sage-800/20 backdrop-blur-sm border-2 border-dashed border-sage-200 dark:border-sage-600 text-sage-500 dark:text-cream-300 text-center rounded-2xl p-12 mb-12 hover:border-sage-300 dark:hover:border-sage-500 transition-all duration-300" role="alert">
-                    <svg class="w-20 h-20 mx-auto mb-4 text-sage-400 dark:text-cream-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-black/30 backdrop-blur-sm border border-dashed border-white/20 text-cream-400 text-center rounded-xl p-12 mb-12 hover:border-white/30 transition-all duration-300" role="alert">
+                    <svg class="w-20 h-20 mx-auto mb-4 text-cream-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                     </svg>
-                    <p class="text-xl font-serif font-light mb-2">No media yet</p>
-                    <p class="text-sage-600 dark:text-cream-400">Spotlight the first Class of ’29 moment by submitting a highlight reel.</p>
+                    <p class="text-xl font-serif font-light mb-2 text-cream-200">No media yet</p>
+                    <p class="text-cream-500">Spotlight the first Class of '29 moment by submitting a highlight reel.</p>
                 </div>
                 {% endif %}
             </div>
 
-            <h2 class="text-3xl font-serif font-light text-sage-700 dark:text-cream-100 mb-6 text-center">Union Voices</h2>
-            <p class="text-center text-sage-500 dark:text-cream-400 mb-8">Read briefs from council committees and classmates in the <a href="{% url 'posts' %}" class="text-lavender-500 dark:text-lavender-300 hover:text-lavender-600 dark:hover:text-lavender-200 underline decoration-lavender-300 underline-offset-4 transition-colors">updates archive</a>.</p>
+            <h2 class="text-3xl font-serif font-light text-cream-100 mb-6 text-center">Union Voices</h2>
+            <p class="text-center text-cream-400 mb-8">Read briefs from council committees and classmates in the <a href="{% url 'posts' %}" class="text-lavender-300 hover:text-lavender-200 underline underline-offset-4 transition-colors">updates archive</a>.</p>
             <div id="blog-posts-container" class="space-y-6 stack-xl">
                 {% for post in posts.Posts %}
-                <article class="bg-cream-50/80 dark:bg-sage-900/70 backdrop-blur-lg rounded-2xl p-8 shadow-lg dark:shadow-2xl border border-sage-100 dark:border-sage-700 hover:shadow-xl dark:hover:shadow-cream-200/30 hover:border-sage-200 dark:hover:border-sage-600 transition-all duration-500 transform hover:-translate-y-1 group">
-                    <h3 class="text-2xl font-serif font-medium text-sage-700 dark:text-cream-100 mb-3 leading-snug group-hover:text-lavender-600 dark:group-hover:text-lavender-300 transition-colors">{{ post.title }}</h3>
-                    <p class="text-sage-400 dark:text-cream-500 text-sm font-light tracking-wide mb-2 flex items-center">
+                <article class="bg-black/50 backdrop-blur-lg rounded-xl p-8 shadow-lg border border-white/10 hover:shadow-xl hover:border-white/15 transition-all duration-300 hover:-translate-y-1 group">
+                    <h3 class="text-2xl font-serif font-medium text-cream-100 mb-3 leading-snug group-hover:text-lavender-300 transition-colors">{{ post.title }}</h3>
+                    <p class="text-cream-500 text-sm font-light tracking-wide mb-2 flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         {{ post.date }}
                     </p>
-                    <p class="text-sage-600 dark:text-cream-200 whitespace-pre-line">{{ post.content }}</p>
-                    {% if is_admin %}
+                    <p class="text-cream-300 whitespace-pre-line">{{ post.content }}</p>
+                    {% if can_publish_media %}
                     <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="{% url 'post_edit' post.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-sage-300 dark:border-sage-600 text-sage-700 dark:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800 transition-all duration-300">
+                        <a href="{% url 'post_edit' post.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border border-white/15 text-cream-200 hover:bg-white/5 transition-all duration-200">
                             Edit
                         </a>
                         <form method="post" action="{% url 'post_delete' post.id %}" onsubmit="return confirm('Delete this bulletin?');">
                             {% csrf_token %}
-                            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-300 dark:border-red-600 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 transition-all duration-300">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all duration-200">
                                 Delete
                             </button>
                         </form>
@@ -176,40 +174,16 @@
                 {% endfor %}
 
                 {% if posts.Posts|length == 0 %}
-                <div class="bg-gradient-to-br from-cream-50/80 to-sage-100/60 dark:from-sage-900/30 dark:to-sage-800/20 backdrop-blur-sm border-2 border-dashed border-sage-200 dark:border-sage-600 text-sage-500 dark:text-cream-300 text-center rounded-2xl p-12 hover:border-sage-300 dark:hover:border-sage-500 transition-all duration-300" role="alert">
-                    <svg class="w-20 h-20 mx-auto mb-4 text-sage-400 dark:text-cream-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-black/30 backdrop-blur-sm border border-dashed border-white/20 text-cream-400 text-center rounded-xl p-12 hover:border-white/30 transition-all duration-300" role="alert">
+                    <svg class="w-20 h-20 mx-auto mb-4 text-cream-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    <p class="text-xl font-serif font-light mb-2">Your bulletin awaits</p>
-                    <p class="text-sage-600 dark:text-cream-400">Submit the next council report or class announcement.</p>
+                    <p class="text-xl font-serif font-light mb-2 text-cream-200">Your bulletin awaits</p>
+                    <p class="text-cream-500">Submit the next council report or class announcement.</p>
                 </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_body %}
-<button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 transform hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group" aria-label="Toggle theme">
-    <svg class="hidden dark:block w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-    </svg>
-    <svg class="block dark:hidden w-6 h-6 group-hover:-rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-    </svg>
-</button>
-<script>
-    function toggleTheme() {
-        const html = document.documentElement;
-        const isDark = html.classList.contains('dark');
-        if (isDark) {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        } else {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    }
-</script>
 {% endblock %}

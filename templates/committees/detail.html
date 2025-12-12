@@ -28,9 +28,6 @@
         opacity: 0.9;
     }
     #committee-hero::after {
-        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(17, 24, 39, 0.55) 55%, rgba(17, 24, 39, 0) 100%);
-    }
-    html.dark #committee-hero::after {
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.62) 55%, rgba(0, 0, 0, 0) 100%);
     }
     #committee-hero .hero-inner {
@@ -50,9 +47,9 @@
                 {{ committee.summary }}
                 <a href="{% url 'home' %}" class="underline underline-offset-4 decoration-cream-200 hover:text-white transition-colors">Return to the quad</a>
             </p>
-            {% if is_admin %}
+            {% if can_publish_media %}
             <div class="flex justify-center">
-                <a href="{% url 'post_create' %}" class="inline-flex items-center bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white font-medium rounded-full px-6 py-3 shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
+                <a href="{% url 'post_create' %}" class="inline-flex items-center bg-gradient-to-r from-sage-500 to-sage-600 text-white font-medium rounded-full px-6 py-3 shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -67,36 +64,36 @@
 <div class="container mx-auto px-6 py-16">
     <div class="flex justify-center">
         <div class="w-full md:w-10/12 lg:w-8/12">
-            <div class="border-t-2 border-dashed border-sage-300 dark:border-sage-700 my-12"></div>
-            <h2 class="text-3xl md:text-4xl font-serif font-light text-sage-800 dark:text-cream-100 mb-8">Latest Briefings</h2>
+            <div class="border-t-2 border-dashed border-sage-700 my-12"></div>
+            <h2 class="text-3xl md:text-4xl font-serif font-light text-cream-100 mb-8">Latest Briefings</h2>
             <div class="space-y-8">
                 {% for post in committee_posts %}
-                <article class="group bg-cream-50/80 dark:bg-sage-900/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl hover:shadow-2xl dark:shadow-cream-200/20 transition-all duration-500 hover:-translate-y-2 border border-sage-200 dark:border-sage-700">
-                    <h3 class="text-3xl font-serif font-semibold mb-3 text-sage-800 dark:text-cream-100 group-hover:text-sage-600 dark:group-hover:text-cream-200 transition-colors duration-300">{{ post.title }}</h3>
-                    <p class="text-sage-500 dark:text-sage-300 text-sm mb-4 flex items-center">
+                <article class="group bg-black/50 backdrop-blur-xl rounded-3xl p-8 shadow-xl hover:shadow-2xl shadow-cream-200/10 transition-all duration-500 hover:-translate-y-2 border border-white/10">
+                    <h3 class="text-3xl font-serif font-semibold mb-3 text-cream-100 group-hover:text-cream-200 transition-colors duration-300">{{ post.title }}</h3>
+                    <p class="text-sage-300 text-sm mb-4 flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         {{ post.date }}
                     </p>
-                    <div class="text-sage-700 dark:text-cream-200 whitespace-pre-line leading-relaxed">
+                    <div class="text-cream-200 whitespace-pre-line leading-relaxed">
                         {{ post.content }}
                     </div>
-                    <div class="mt-6 pt-6 border-t border-sage-200 dark:border-sage-700 flex flex-col gap-4">
-                        <div class="flex items-center text-sage-600 dark:text-sage-400 text-sm">
+                    <div class="mt-6 pt-6 border-t border-white/10 flex flex-col gap-4">
+                        <div class="flex items-center text-sage-400 text-sm">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                             </svg>
                             Stewarded by {{ committee.name }}
                         </div>
-                        {% if is_admin %}
+                        {% if can_publish_media %}
                         <div class="flex flex-wrap gap-3">
-                            <a href="{% url 'post_edit' post.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-sage-300 dark:border-sage-600 text-sage-700 dark:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800 transition-all duration-300">
+                            <a href="{% url 'post_edit' post.id %}" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-sage-600 text-cream-100 hover:bg-sage-800 transition-all duration-300">
                                 Edit
                             </a>
                             <form method="post" action="{% url 'post_delete' post.id %}" onsubmit="return confirm('Delete this dispatch?');">
                                 {% csrf_token %}
-                                <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-300 dark:border-red-600 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 transition-all duration-300">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full border-2 border-red-600 text-red-300 hover:bg-red-900/40 transition-all duration-300">
                                     Delete
                                 </button>
                             </form>
@@ -105,11 +102,11 @@
                     </div>
                 </article>
                 {% empty %}
-                <div class="bg-gradient-to-br from-cream-50 to-sage-100 dark:from-sage-900/35 dark:to-sage-800/25 border-2 border-dashed border-sage-200 dark:border-sage-700 rounded-3xl p-12 text-center shadow-inner">
-                    <p class="text-xl font-serif text-sage-700 dark:text-cream-100">No briefings yet</p>
-                    <p class="mt-2 text-sage-500 dark:text-sage-300">When the first story is ready, it will welcome the cohort here.</p>
-                    {% if is_admin %}
-                    <a href="{% url 'post_create' %}" class="mt-4 inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-sage-700 to-sage-900 dark:from-sage-500 dark:to-sage-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="bg-gradient-to-br from-black/40 to-black/60 border-2 border-dashed border-sage-700 rounded-3xl p-12 text-center shadow-inner">
+                    <p class="text-xl font-serif text-cream-100">No briefings yet</p>
+                    <p class="mt-2 text-sage-300">When the first story is ready, it will welcome the cohort here.</p>
+                    {% if can_publish_media %}
+                    <a href="{% url 'post_create' %}" class="mt-4 inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-sage-500 to-sage-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                         Draft an Update
                     </a>
                     {% endif %}
@@ -118,13 +115,13 @@
             </div>
 
             <div class="mt-16">
-                <h2 class="text-2xl font-serif font-semibold text-sage-800 dark:text-cream-100 mb-6">Explore Other Committees</h2>
+                <h2 class="text-2xl font-serif font-semibold text-cream-100 mb-6">Explore Other Committees</h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     {% for item in committees %}
                         {% if item.key != committee.key %}
-                        <a href="{% url 'committee' item.key %}" class="block rounded-3xl border border-sage-200 dark:border-sage-700 bg-cream-50/70 dark:bg-sage-900/60 px-5 py-4 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                            <div class="text-sm font-semibold text-sage-700 dark:text-cream-100">{{ item.name }}</div>
-                            <p class="text-xs text-sage-500 dark:text-sage-400 mt-1">{{ item.summary }}</p>
+                        <a href="{% url 'committee' item.key %}" class="block rounded-3xl border border-white/10 bg-black/50 backdrop-blur-xl px-5 py-4 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                            <div class="text-sm font-semibold text-cream-100">{{ item.name }}</div>
+                            <p class="text-xs text-sage-400 mt-1">{{ item.summary }}</p>
                         </a>
                         {% endif %}
                     {% endfor %}
@@ -135,26 +132,4 @@
 </div>
 {% endblock %}
 
-{% block extra_body %}
-<button onclick="toggleTheme()" class="fixed bottom-6 right-6 bg-gradient-to-br from-sage-700 to-sage-900 dark:from-cream-200 dark:to-cream-100 text-white dark:text-sage-900 p-4 rounded-full shadow-2xl hover:shadow-sage-700/40 dark:hover:shadow-cream-300/40 transform hover:scale-110 hover:rotate-12 transition-all duration-300 z-50 group" aria-label="Toggle theme">
-    <svg class="w-6 h-6 block dark:hidden group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-    </svg>
-    <svg class="w-6 h-6 hidden dark:block group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-    </svg>
-</button>
-<script>
-    function toggleTheme() {
-        var html = document.documentElement;
-        var isDark = html.classList.contains('dark');
-        if (isDark) {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        } else {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    }
-</script>
-{% endblock %}
+
